@@ -1,0 +1,23 @@
+# Ambientes virtuais
+venv/
+.venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Streamlit secrets locais (segurança da chave de API)
+.streamlit/secrets.toml
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Arquivos temporários e uploads locais
+*.pdf
+*.log
+.DS_Store
