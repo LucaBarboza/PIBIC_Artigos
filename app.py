@@ -52,6 +52,13 @@ header {visibility: hidden;}
     margin-bottom: 1.8rem;
 }
 
+/* Divisor sutil */
+hr {
+    border-color: #E2E8F0 !important;
+    margin: 1.8rem 0 !important;
+    opacity: 0.8 !important;
+}
+
 /* Box do Tutorial */
 .tutorial-card {
     background: #FFFFFF;
@@ -250,6 +257,8 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+st.divider()
 
 # ----------------- ÁREA DE INTERAÇÃO (UPLOAD + BOTÃO) -----------------
 with st.container(border=True):
