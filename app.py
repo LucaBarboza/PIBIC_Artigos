@@ -618,59 +618,30 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
             unsafe_allow_html=True,
         )
 
-        refs = res.referencias
-
         normas_info = {
-            "ABNT (Associação Brasileira de Normas Técnicas)": {
-                "valor": refs.abnt,
-                "chave": "ABNT",
-                "escopo": "Onde impera: TCCs, dissertações, teses, relatórios técnicos e periódicos nacionais da maioria das universidades brasileiras.",
-            },
-            "APA (American Psychological Association)": {
-                "valor": refs.apa,
-                "chave": "APA",
-                "escopo": "Onde impera: Psicologia, Educação, Administração, Ciências Sociais Aplicadas e submissões para periódicos internacionais (ou nacionais indexados internacionalmente, como Scielo e Redalyc).",
-            },
-            "Vancouver": {
-                "valor": refs.vancouver,
-                "chave": "Vancouver",
-                "escopo": "Onde impera: Medicina, Enfermagem, Odontologia, Farmácia e Ciências da Saúde em geral.",
-            },
-            "IEEE (Institute of Electrical and Electronics Engineers)": {
-                "valor": refs.ieee,
-                "chave": "IEEE",
-                "escopo": "Onde impera: Engenharia Elétrica, Eletrônica, Ciência da Computação, Robótica e Telecomunicações.",
-            },
-            "Chicago": {
-                "valor": refs.chicago,
-                "chave": "Chicago",
-                "escopo": "Onde impera: Usado pontualmente em História, Filosofia e Belas Artes, especialmente pelo uso intensivo de notas de rodapé explicativas e bibliografia ao final.",
-            },
-            "MLA (Modern Language Association)": {
-                "valor": refs.mla,
-                "chave": "MLA",
-                "escopo": "Onde impera: Predominante em estudos de Letras, Linguística e Literatura voltados a publicações em línguas estrangeiras.",
-            },
+            "ABNT (Associação Brasileira de Normas Técnicas)": refs.abnt,
+            "APA (American Psychological Association)": refs.apa,
+            "Vancouver": refs.vancouver,
+            "IEEE (Institute of Electrical and Electronics Engineers)": refs.ieee,
+            "Chicago": refs.chicago,
+            "MLA (Modern Language Association)": refs.mla,
         }
 
         alguma_norma_exibida = False
-        for nome_norma, info in normas_info.items():
-            if info["valor"]:
+        for nome_norma, valor in normas_info.items():
+            if valor:
                 alguma_norma_exibida = True
                 st.markdown(
                     f"""
-                    <div style="margin-top: 1rem; margin-bottom: 0.3rem;">
-                        <span style="background: #DBEAFE; color: #1E40AF; font-weight: 700; font-size: 0.82rem; padding: 0.25rem 0.65rem; border-radius: 6px;">
+                    <div style="margin-top: 1rem; margin-bottom: 0.4rem;">
+                        <span style="background: #DBEAFE; color: #1E40AF; font-weight: 700; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 6px;">
                             {nome_norma}
                         </span>
-                        <div style="font-size: 0.82rem; color: #64748B; margin-top: 0.35rem; line-height: 1.4;">
-                            {info['escopo']}
-                        </div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
-                st.code(info["valor"], language="markdown")
+                st.code(valor, language="markdown")
 
         if not alguma_norma_exibida:
             st.info("Nenhuma referência selecionada para exibição.")
