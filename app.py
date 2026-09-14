@@ -1,5 +1,7 @@
-import streamlit as st
 import os
+import streamlit as st
+from src.gemini_analyzer import analisar_artigo_pdf, obter_api_key
+from src.schemas import AnaliseArtigo
 
 # Configuração da página
 st.set_page_config(
@@ -20,16 +22,16 @@ html, body, [class*="css"] {
     color: #0F172A;
 }
 
-/* Ocultar elementos desnecessários da barra superior */
+/* Ocultar elementos padrão do Streamlit */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* Container principal com espaçamento refinado */
+/* Container principal */
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 4rem !important;
-    max-width: 860px !important;
+    max-width: 880px !important;
 }
 
 /* Header & Capa */
@@ -45,11 +47,11 @@ header {visibility: hidden;}
 }
 
 .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.6;
     color: #475569;
     font-weight: 400;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.6rem;
 }
 
 /* Divisor sutil */
@@ -66,7 +68,7 @@ hr {
     border-radius: 18px;
     padding: 1.6rem 1.8rem;
     box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-    margin-bottom: 2.2rem;
+    margin-bottom: 1.5rem;
     position: relative;
     overflow: hidden;
 }
@@ -138,13 +140,13 @@ hr {
     line-height: 1.4;
 }
 
-/* Container com borda estilizado para ações */
+/* Estilo do container de controle */
 [data-testid="stVerticalBlockBorderWrapper"] {
     background: #FFFFFF;
     border-radius: 18px !important;
     border: 1px solid #E2E8F0 !important;
     box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
-    padding: 0.8rem !important;
+    padding: 1.2rem !important;
     margin-bottom: 1.5rem;
 }
 
@@ -154,19 +156,19 @@ hr {
     color: #1E293B;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-/* Estilo do botão primário */
+/* Botão de Análise */
 div.stButton > button:first-child {
     background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
     color: #FFFFFF !important;
     font-weight: 600 !important;
-    font-size: 1rem !important;
-    padding: 0.75rem 2rem !important;
+    font-size: 1.05rem !important;
+    padding: 0.85rem 2rem !important;
     border-radius: 12px !important;
     border: none !important;
     box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
@@ -180,19 +182,6 @@ div.stButton > button:first-child:hover {
     transform: translateY(-1px) !important;
 }
 
-/* Customização do File Uploader */
-[data-testid="stFileUploader"] {
-    background: #F8FAFC;
-    border: 2px dashed #CBD5E1;
-    border-radius: 14px;
-    padding: 1rem;
-    transition: border-color 0.2s;
-}
-
-[data-testid="stFileUploader"]:hover {
-    border-color: #3B82F6;
-}
-
 .file-info-badge {
     background: #ECFDF5;
     border: 1px solid #A7F3D0;
@@ -203,8 +192,118 @@ div.stButton > button:first-child:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.8rem;
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+/* CARDS DE RESULTADOS */
+.result-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 1.6rem;
+    box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.04);
+    margin-bottom: 1.4rem;
+}
+
+.result-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0F172A;
     margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.tldr-box {
+    background: linear-gradient(135deg, #EFF6FF 0%, #EEF2FF 100%);
+    border: 1px solid #BFDBFE;
+    border-left: 4px solid #2563EB;
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #1E3A8A;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.title-display {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.4rem;
+}
+
+.title-sub {
+    font-size: 0.95rem;
+    color: #64748B;
+    font-style: italic;
+    margin-bottom: 0.8rem;
+}
+
+.qa-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.qa-box {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 1.1rem;
+    transition: border-color 0.2s;
+}
+
+.qa-box:hover {
+    border-color: #CBD5E1;
+}
+
+.qa-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.qa-text {
+    font-size: 0.9rem;
+    color: #334155;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.norma-container {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 1.1rem;
+    margin-bottom: 1.2rem;
+}
+
+.norma-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    background: #DBEAFE;
+    color: #1E40AF;
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+}
+
+.norma-scope {
+    font-size: 0.82rem;
+    color: #64748B;
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
 }
 </style>
 """
@@ -216,9 +315,8 @@ st.markdown(
     <h1 class="hero-title">Analisador Inteligente de Artigos Científicos</h1>
     <p class="hero-subtitle">
         Acelere sua revisão bibliográfica e fichamento acadêmico. Faça upload do PDF de qualquer artigo 
-        e receba uma <b>análise estruturada e profunda via Google Gemini</b>: síntese em múltiplos níveis, 
-        avaliação metodológica, pontos fundamentais respondidos e referências pré-formatadas nas 
-        principais normas acadêmicas do mundo.
+        e receba uma <b>análise estruturada e profunda via Google Gemini 3.5 Flash-Lite</b>: síntese em múltiplos níveis, 
+        avaliação metodológica, respostas às perguntas fundamentais e referências normatizadas.
     </p>
     """,
     unsafe_allow_html=True,
@@ -239,18 +337,18 @@ st.markdown(
             </div>
             <div class="tutorial-step">
                 <div class="step-num">2</div>
-                <div class="step-title">Inicie a Análise</div>
-                <div class="step-desc">Clique no botão de análise para enviar o documento de forma nativa ao Gemini.</div>
+                <div class="step-title">Selecione Normas</div>
+                <div class="step-desc">Escolha quais normas bibliográficas deseja gerar (ABNT, APA, IEEE, etc.).</div>
             </div>
             <div class="tutorial-step">
                 <div class="step-num">3</div>
-                <div class="step-title">Explore os Dados</div>
-                <div class="step-desc">Consulte resumos traduzidos, rigor teórico e referências (ABNT, APA, IEEE, etc.).</div>
+                <div class="step-title">Inicie a Análise</div>
+                <div class="step-desc">O Gemini 3.5 Flash-Lite realiza a leitura multimodal e o fichamento estruturado.</div>
             </div>
             <div class="tutorial-step">
                 <div class="step-num">4</div>
-                <div class="step-title">Baixe o Relatório</div>
-                <div class="step-desc">Exporte todo o fichamento completo em um arquivo pronto para seu TCC ou projeto.</div>
+                <div class="step-title">Copie & Estude</div>
+                <div class="step-desc">Consulte os resumos, perguntas metodológicas e copie as referências em 1 clique.</div>
             </div>
         </div>
     </div>
@@ -260,16 +358,15 @@ st.markdown(
 
 st.divider()
 
-# ----------------- ÁREA DE INTERAÇÃO (UPLOAD + BOTÃO) -----------------
+# ----------------- ÁREA DE INTERAÇÃO (UPLOAD + CONTROLES + BOTÃO) -----------------
 with st.container(border=True):
-    st.markdown('<div class="section-label"><span>📤</span> 1. Selecionar Arquivo do Artigo</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label"><span>📤</span> 1. Selecionar Arquivo do Artigo (PDF)</div>', unsafe_allow_html=True)
 
-    # Input de subir PDF
     uploaded_file = st.file_uploader(
         label="Arraste e solte o arquivo PDF do artigo científico aqui",
         type=["pdf"],
         help="Selecione um arquivo PDF de artigo científico para análise completa.",
-        label_visibility="visible",
+        label_visibility="collapsed",
     )
 
     if uploaded_file is not None:
@@ -278,24 +375,225 @@ with st.container(border=True):
             f"""
             <div class="file-info-badge">
                 <span>📄 <b>{uploaded_file.name}</b> ({file_size_mb:.2f} MB)</span>
-                <span>✅ Pronto para análise</span>
+                <span>✅ PDF carregado</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
     st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-label"><span>⚡</span> 2. Processamento da IA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label"><span>📚</span> 2. Normas Bibliográficas Desejadas</div>', unsafe_allow_html=True)
 
-    # Botão fazer análise
+    normas_opcoes = ["ABNT", "APA", "Vancouver", "IEEE", "Chicago", "MLA"]
+    normas_selecionadas = st.multiselect(
+        label="Escolha quais normas a IA deve formatar:",
+        options=normas_opcoes,
+        default=["ABNT", "APA", "Vancouver", "IEEE", "Chicago", "MLA"],
+        help="Selecione as normas que deseja receber. Normas não selecionadas serão ignoradas para economizar tokens.",
+        label_visibility="collapsed",
+    )
+
+    st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label"><span>⚡</span> 3. Processamento da IA</div>', unsafe_allow_html=True)
+
     analisar_clicado = st.button("🚀 Fazer Análise do Artigo", use_container_width=True)
 
-# Feedback da ação do usuário (Placeholder para Etapa 2)
+# ----------------- EXECUÇÃO DA ANÁLISE COM GEMINI -----------------
 if analisar_clicado:
     if uploaded_file is None:
         st.warning("⚠️ Por favor, faça o upload de um arquivo PDF antes de iniciar a análise.")
     else:
-        st.info(
-            f"🔄 Artigo **{uploaded_file.name}** recebido com sucesso!\n\n"
-            "*(A extração multimodal e o processamento estruturado com Gemini API serão conectados na Etapa 2)*"
+        try:
+            # Validar existência da chave
+            _ = obter_api_key()
+
+            with st.spinner("🔍 Analisando artigo com Gemini 3.5 Flash-Lite (leitura multimodal e estruturação científica)..."):
+                pdf_bytes = uploaded_file.getvalue()
+                resultado = analisar_artigo_pdf(
+                    pdf_bytes=pdf_bytes,
+                    normas_selecionadas=normas_selecionadas,
+                    nome_arquivo=uploaded_file.name,
+                )
+                # Salvar no session_state para manter persistente
+                st.session_state["resultado_analise"] = resultado
+                st.session_state["nome_artigo_analisado"] = uploaded_file.name
+                st.session_state["normas_processadas"] = normas_selecionadas
+                st.success("✨ Análise científica concluída com sucesso!")
+
+        except ValueError as ve:
+            st.error(f"🔑 **Erro de Credencial:** {ve}")
+            st.info(
+                "💡 **Como configurar no Streamlit Cloud:**\n\n"
+                "1. Abra seu painel no Streamlit Cloud.\n"
+                "2. Vá em **Settings** -> **Secrets**.\n"
+                "3. Insira:\n```toml\nGEMINI_API_KEY = \"sua_chave_aqui\"\n```"
+            )
+        except Exception as e:
+            st.error(f"❌ Ocorreu um erro durante o processamento do artigo: {e}")
+
+# ----------------- EXIBIÇÃO EM CARDS VERTICAIS CONTÍNUOS -----------------
+if "resultado_analise" in st.session_state and st.session_state["resultado_analise"] is not None:
+    res: AnaliseArtigo = st.session_state["resultado_analise"]
+    nome_doc = st.session_state.get("nome_artigo_analisado", "Artigo")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # CARD 1: TÍTULOS & TL;DR (RESUMO CURTO)
+    st.markdown(
+        f"""
+        <div class="result-card">
+            <div class="result-card-header">
+                <span>📌</span> Título & Resumo Executivo (TL;DR)
+            </div>
+            <div class="title-display">{res.titulo_traduzido}</div>
+            <div class="title-sub">Original: {res.titulo_original}</div>
+            <div class="tldr-box">
+                <b>⚡ Síntese Executiva (TL;DR):</b><br>
+                {res.resumo_curto}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # CARD 2: RESUMOS COMPARATIVOS (ORIGINAL E TRADUZIDO)
+    with st.container():
+        st.markdown(
+            """
+            <div class="result-card">
+                <div class="result-card-header">
+                    <span>🌐</span> Resumo do Artigo (Abstract)
+                </div>
+            """,
+            unsafe_allow_html=True,
         )
+
+        col_orig, col_trad = st.columns(2)
+        with col_orig:
+            st.markdown("##### 🇺🇸 Resumo Original")
+            st.markdown(f"> {res.resumo_original}")
+
+        with col_trad:
+            st.markdown("##### 🇧🇷 Resumo Traduzido")
+            st.markdown(f"> {res.resumo_traduzido}")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # CARD 3: RESUMO COMPLETO / FICHAMENTO ANALÍTICO
+    st.markdown(
+        f"""
+        <div class="result-card">
+            <div class="result-card-header">
+                <span>📖</span> Resumo Completo & Fichamento Analítico
+            </div>
+            <div style="font-size: 0.95rem; line-height: 1.7; color: #1E293B;">
+                {res.resumo_completo}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # CARD 4: PERGUNTAS FUNDAMENTAIS RESPONDIDAS & RIGOR CIENTÍFICO
+    pf = res.perguntas_fundamentais
+    st.markdown(
+        f"""
+        <div class="result-card">
+            <div class="result-card-header">
+                <span>🔬</span> Perguntas Fundamentais & Rigor Científico
+            </div>
+            <div class="qa-grid">
+                <div class="qa-box">
+                    <div class="qa-title"><span>🎯</span> Assunto Principal & Lacuna de Conhecimento</div>
+                    <p class="qa-text">{pf.assunto_principal}</p>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-title"><span>🔍</span> Foco & Hipótese de Pesquisa</div>
+                    <p class="qa-text">{pf.foco}</p>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-title"><span>🧠</span> Foco Teórico & Arcabouço Epistemológico</div>
+                    <p class="qa-text">{pf.foco_teorico}</p>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-title"><span>🚀</span> Novidades & Contribuições Inéditas</div>
+                    <p class="qa-text">{pf.novidades_do_artigo}</p>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-title"><span>⚖️</span> Avaliação da Fundamentação & Evidências</div>
+                    <p class="qa-text">{pf.fundamentacao}</p>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-title"><span>📊</span> Qualidade Metodológica & Limitações</div>
+                    <p class="qa-text">{pf.qualidade_artigo}</p>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # CARD 5: REFERÊNCIAS NORMATIZADAS
+    st.markdown(
+        """
+        <div class="result-card">
+            <div class="result-card-header">
+                <span>📚</span> Referências Bibliográficas Normatizadas
+            </div>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1.2rem;">
+                Copie a referência pré-formatada pronta para o seu trabalho, projeto ou artigo acadêmico:
+            </p>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    refs = res.referencias
+
+    # Descrições pedagógicas de onde impera cada norma (solicitado pelo usuário)
+    normas_info = {
+        "ABNT": {
+            "valor": refs.abnt,
+            "escopo": "<b>Onde impera:</b> TCCs, dissertações, teses, relatórios técnicos e periódicos nacionais da maioria das universidades brasileiras (NBR 6023 / NBR 10520).",
+        },
+        "APA": {
+            "valor": refs.apa,
+            "escopo": "<b>Onde impera:</b> Psicologia, Educação, Administração, Ciências Sociais Aplicadas e submissões para periódicos internacionais (ou nacionais indexados internacionalmente, como SciELO e Redalyc).",
+        },
+        "Vancouver": {
+            "valor": refs.vancouver,
+            "escopo": "<b>Onde impera:</b> Medicina, Enfermagem, Odontologia, Farmácia e Ciências da Saúde em geral.",
+        },
+        "IEEE": {
+            "valor": refs.ieee,
+            "escopo": "<b>Onde impera:</b> Engenharia Elétrica, Eletrônica, Ciência da Computação, Robótica e Telecomunicações.",
+        },
+        "Chicago": {
+            "valor": refs.chicago,
+            "escopo": "<b>Onde impera:</b> História, Filosofia e Belas Artes, especialmente pelo uso intensivo de notas de rodapé explicativas e bibliografia ao final.",
+        },
+        "MLA": {
+            "valor": refs.mla,
+            "escopo": "<b>Onde impera:</b> Estudos de Letras, Linguística e Literatura voltados a publicações em línguas estrangeiras.",
+        },
+    }
+
+    alguma_norma_exibida = False
+    for nome_norma, info in normas_info.items():
+        if info["valor"]:
+            alguma_norma_exibida = True
+            st.markdown(
+                f"""
+                <div class="norma-container">
+                    <span class="norma-badge">{nome_norma}</span>
+                    <div class="norma-scope">{info['escopo']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            # Campo de código com botão de cópia nativo em 1 clique
+            st.code(info["valor"], language="markdown")
+
+    if not alguma_norma_exibida:
+        st.info("Nenhuma norma bibliográfica foi selecionada para este processamento.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
