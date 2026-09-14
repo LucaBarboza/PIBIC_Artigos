@@ -384,14 +384,30 @@ with st.container(border=True):
     st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label"><span>📚</span> 2. Normas Bibliográficas Desejadas</div>', unsafe_allow_html=True)
 
-    normas_opcoes = ["ABNT", "APA", "Vancouver", "IEEE", "Chicago", "MLA"]
-    normas_selecionadas = st.multiselect(
-        label="Escolha quais normas a IA deve formatar:",
-        options=normas_opcoes,
-        default=["ABNT", "APA", "Vancouver", "IEEE", "Chicago", "MLA"],
-        help="Selecione as normas que deseja receber. Normas não selecionadas serão ignoradas para economizar tokens.",
-        label_visibility="collapsed",
-    )
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        cb_abnt = st.checkbox("ABNT", value=True, help="Associação Brasileira de Normas Técnicas (TCCs e periódicos brasileiros)")
+        cb_apa = st.checkbox("APA", value=False, help="American Psychological Association (Sociais e periódicos internacionais)")
+    with col2:
+        cb_vancouver = st.checkbox("Vancouver", value=False, help="Padrão biomédico e Ciências da Saúde")
+        cb_ieee = st.checkbox("IEEE", value=False, help="Engenharias, Computação e Robótica")
+    with col3:
+        cb_chicago = st.checkbox("Chicago", value=False, help="História, Filosofia e Belas Artes")
+        cb_mla = st.checkbox("MLA", value=False, help="Letras, Linguística e Literatura")
+
+    normas_selecionadas = []
+    if cb_abnt:
+        normas_selecionadas.append("ABNT")
+    if cb_apa:
+        normas_selecionadas.append("APA")
+    if cb_vancouver:
+        normas_selecionadas.append("Vancouver")
+    if cb_ieee:
+        normas_selecionadas.append("IEEE")
+    if cb_chicago:
+        normas_selecionadas.append("Chicago")
+    if cb_mla:
+        normas_selecionadas.append("MLA")
 
     st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label"><span>⚡</span> 3. Processamento da IA</div>', unsafe_allow_html=True)
