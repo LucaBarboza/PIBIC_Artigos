@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-from src.gemini_analyzer import analisar_artigo_pdf, obter_api_key
+from src.gemini_analyzer import analisar_artigo_profundo, obter_api_key
 from src.schemas import AnaliseArtigo
 
 # Configuração da página
@@ -414,7 +414,7 @@ with st.container(border=True):
 
     analisar_clicado = st.button("🚀 Fazer Análise do Artigo", use_container_width=True)
 
-# ----------------- EXECUÇÃO DA ANÁLISE COM GEMINI -----------------
+# ----------------- EXECUÇÃO DA ANÁLISE COM GEMINI (PIPELINE EM 3 ETAPAS) -----------------
 if analisar_clicado:
     if uploaded_file is None:
         st.warning("⚠️ Por favor, faça o upload de um arquivo PDF antes de iniciar a análise.")
@@ -423,18 +423,29 @@ if analisar_clicado:
             # Validar existência da chave
             _ = obter_api_key()
 
-            with st.spinner("🔍 Analisando artigo com Gemini 3.5 Flash-Lite (leitura multimodal e estruturação científica)..."):
-                pdf_bytes = uploaded_file.getvalue()
-                resultado = analisar_artigo_pdf(
-                    pdf_bytes=pdf_bytes,
-                    normas_selecionadas=normas_selecionadas,
-                    nome_arquivo=uploaded_file.name,
-                )
-                # Salvar no session_state para manter persistente
-                st.session_state["resultado_analise"] = resultado
-                st.session_state["nome_artigo_analisado"] = uploaded_file.name
-                st.session_state["normas_processadas"] = normas_selecionadas
-                st.success("✨ Análise científica concluída com sucesso!")
+            progress_bar = st.progress(0.0)
+            status_placeholder = st.empty()
+
+            def atualizar_progresso(pct: float, msg: str):
+                progress_bar.progress(pct)
+                status_placeholder.info(f"⏳ **{msg}**")
+
+            pdf_bytes = uploaded_file.getvalue()
+            resultado = analisar_artigo_profundo(
+                pdf_bytes=pdf_bytes,
+                normas_selecionadas=normas_selecionadas,
+                nome_arquivo=uploaded_file.name,
+                progresso_callback=atualizar_progresso,
+            )
+
+            progress_bar.empty()
+            status_placeholder.empty()
+
+            # Salvar no session_state para manter persistente
+            st.session_state["resultado_analise"] = resultado
+            st.session_state["nome_artigo_analisado"] = uploaded_file.name
+            st.session_state["normas_processadas"] = normas_selecionadas
+            st.success("✨ Análise científica aprofundada concluída com sucesso!")
 
         except ValueError as ve:
             st.error(f"🔑 **Erro de Credencial:** {ve}")
