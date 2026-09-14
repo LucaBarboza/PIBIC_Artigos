@@ -386,14 +386,14 @@ with st.container(border=True):
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        cb_abnt = st.checkbox("ABNT", value=True, help="Associação Brasileira de Normas Técnicas (TCCs e periódicos brasileiros)")
-        cb_apa = st.checkbox("APA", value=False, help="American Psychological Association (Sociais e periódicos internacionais)")
+        cb_abnt = st.checkbox("ABNT", value=True)
+        cb_apa = st.checkbox("APA", value=False)
     with col2:
-        cb_vancouver = st.checkbox("Vancouver", value=False, help="Padrão biomédico e Ciências da Saúde")
-        cb_ieee = st.checkbox("IEEE", value=False, help="Engenharias, Computação e Robótica")
+        cb_vancouver = st.checkbox("Vancouver", value=False)
+        cb_ieee = st.checkbox("IEEE", value=False)
     with col3:
-        cb_chicago = st.checkbox("Chicago", value=False, help="História, Filosofia e Belas Artes")
-        cb_mla = st.checkbox("MLA", value=False, help="Letras, Linguística e Literatura")
+        cb_chicago = st.checkbox("Chicago", value=False)
+        cb_mla = st.checkbox("MLA", value=False)
 
     normas_selecionadas = []
     if cb_abnt:
@@ -619,12 +619,12 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
         )
 
         normas_info = {
-            "ABNT (Associação Brasileira de Normas Técnicas)": refs.abnt,
-            "APA (American Psychological Association)": refs.apa,
+            "ABNT": refs.abnt,
+            "APA": refs.apa,
             "Vancouver": refs.vancouver,
-            "IEEE (Institute of Electrical and Electronics Engineers)": refs.ieee,
+            "IEEE": refs.ieee,
             "Chicago": refs.chicago,
-            "MLA (Modern Language Association)": refs.mla,
+            "MLA": refs.mla,
         }
 
         alguma_norma_exibida = False

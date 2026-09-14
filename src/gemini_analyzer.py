@@ -107,8 +107,9 @@ TAREFAS OBRIGATÓRIAS:
 2. Forneça uma Tradução Técnica primorosa do título para o Português brasileiro.
 3. Extraia o Resumo (Abstract) original na íntegra.
 4. NORMAS SOLICITADAS: [{normas_txt}].
-   - Gere com exatidão milimétrica a referência completa do próprio artigo para CADA uma das normas listadas acima.
+   - Gere com exatidão milimétrica a referência bibliográfica completa do próprio artigo para CADA uma das normas listadas acima.
    - Respeite rigorosamente todas as regras de autoria (caixa alta, iniciais), títulos em itálico/negrito, periódico, volume, número, páginas, mês/ano e DOI.
+   - IMPORTANTE: Retorne ESTRITAMENTE a referência formatada pronta para citação. NÃO adicione comentários, explicações, observações nem frases como 'Onde impera' ou similar.
    - Para qualquer norma NÃO selecionada, defina o campo estritamente como null.
 """
 
