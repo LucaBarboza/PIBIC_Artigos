@@ -131,14 +131,14 @@ header {visibility: hidden;}
     line-height: 1.4;
 }
 
-/* Área de Upload e Ações */
-.action-card {
+/* Container com borda estilizado para ações */
+[data-testid="stVerticalBlockBorderWrapper"] {
     background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 18px;
-    padding: 1.8rem;
-    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
-    margin-bottom: 2rem;
+    border-radius: 18px !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+    padding: 0.8rem !important;
+    margin-bottom: 1.5rem;
 }
 
 .section-label {
@@ -252,36 +252,34 @@ st.markdown(
 )
 
 # ----------------- ÁREA DE INTERAÇÃO (UPLOAD + BOTÃO) -----------------
-st.markdown('<div class="action-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-label"><span>📤</span> 1. Selecionar Arquivo do Artigo</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown('<div class="section-label"><span>📤</span> 1. Selecionar Arquivo do Artigo</div>', unsafe_allow_html=True)
 
-# Input de subir PDF
-uploaded_file = st.file_uploader(
-    label="Arraste e solte o arquivo PDF do artigo científico aqui",
-    type=["pdf"],
-    help="Selecione um arquivo PDF de artigo científico para análise completa.",
-    label_visibility="visible",
-)
-
-if uploaded_file is not None:
-    file_size_mb = uploaded_file.size / (1024 * 1024)
-    st.markdown(
-        f"""
-        <div class="file-info-badge">
-            <span>📄 <b>{uploaded_file.name}</b> ({file_size_mb:.2f} MB)</span>
-            <span>✅ Pronto para análise</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
+    # Input de subir PDF
+    uploaded_file = st.file_uploader(
+        label="Arraste e solte o arquivo PDF do artigo científico aqui",
+        type=["pdf"],
+        help="Selecione um arquivo PDF de artigo científico para análise completa.",
+        label_visibility="visible",
     )
 
-st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
-st.markdown('<div class="section-label"><span>⚡</span> 2. Processamento da IA</div>', unsafe_allow_html=True)
+    if uploaded_file is not None:
+        file_size_mb = uploaded_file.size / (1024 * 1024)
+        st.markdown(
+            f"""
+            <div class="file-info-badge">
+                <span>📄 <b>{uploaded_file.name}</b> ({file_size_mb:.2f} MB)</span>
+                <span>✅ Pronto para análise</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-# Botão fazer análise
-analisar_clicado = st.button("🚀 Fazer Análise do Artigo", use_container_width=True)
+    st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label"><span>⚡</span> 2. Processamento da IA</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+    # Botão fazer análise
+    analisar_clicado = st.button("🚀 Fazer Análise do Artigo", use_container_width=True)
 
 # Feedback da ação do usuário (Placeholder para Etapa 2)
 if analisar_clicado:
