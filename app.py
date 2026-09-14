@@ -196,155 +196,114 @@ div.stButton > button:first-child:hover {
     margin-bottom: 0.6rem;
 }
 
-/* ESTILIZAÇÃO DAS ABAS (TABS) E RESULTADOS */
-.stTabs [data-baseweb="tab-list"] {
-    gap: 8px;
-    border-bottom: 2px solid #E2E8F0;
-    padding-bottom: 6px;
-    margin-bottom: 1.5rem;
-}
-
-.stTabs [data-baseweb="tab"] {
-    padding: 9px 18px !important;
-    font-weight: 600 !important;
-    border-radius: 10px !important;
-    font-size: 0.92rem !important;
-    color: #64748B !important;
-    background-color: #F8FAFC !important;
-    border: 1px solid #E2E8F0 !important;
-    transition: all 0.2s ease !important;
-}
-
-.stTabs [data-baseweb="tab"]:hover {
-    color: #1E293B !important;
-    border-color: #CBD5E1 !important;
-}
-
-.stTabs [aria-selected="true"] {
-    color: #2563EB !important;
-    background: #EFF6FF !important;
-    border-color: #BFDBFE !important;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1) !important;
-}
-
-/* Header do Artigo Analisado */
-.article-header {
+/* CARDS DE RESULTADOS */
+.result-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 1.6rem;
     box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.04);
-    margin-bottom: 1.6rem;
+    margin-bottom: 1.4rem;
 }
 
-.article-title-pt {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #0F172A;
-    line-height: 1.35;
-    margin-bottom: 0.4rem;
-}
-
-.article-title-orig {
-    font-size: 0.95rem;
-    color: #64748B;
-    font-style: italic;
-    line-height: 1.4;
-    margin-bottom: 0.8rem;
-}
-
-/* TL;DR Box */
-.tldr-card {
-    background: linear-gradient(135deg, #F0F9FF 0%, #EEF2FF 100%);
-    border: 1px solid #BAE6FD;
-    border-left: 4px solid #0284C7;
-    border-radius: 12px;
-    padding: 1.3rem;
-    margin-bottom: 1.5rem;
-}
-
-.tldr-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #0369A1;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.4rem;
-}
-
-.tldr-text {
-    font-size: 0.96rem;
-    color: #0C4A6E;
-    line-height: 1.65;
-    margin: 0;
-}
-
-/* Card de Perguntas Fundamentais */
-.qa-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 1.2rem;
-    height: 100%;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-    margin-bottom: 1rem;
-    transition: transform 0.15s, border-color 0.15s;
-}
-
-.qa-card:hover {
-    border-color: #93C5FD;
-    transform: translateY(-2px);
-}
-
-.qa-header {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #1E293B;
+.result-card-header {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.4rem;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
     border-bottom: 1px solid #F1F5F9;
 }
 
-.qa-content {
-    font-size: 0.88rem;
+.tldr-box {
+    background: linear-gradient(135deg, #EFF6FF 0%, #EEF2FF 100%);
+    border: 1px solid #BFDBFE;
+    border-left: 4px solid #2563EB;
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #1E3A8A;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.title-display {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.4rem;
+}
+
+.title-sub {
+    font-size: 0.95rem;
+    color: #64748B;
+    font-style: italic;
+    margin-bottom: 0.8rem;
+}
+
+.qa-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.qa-box {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 1.1rem;
+    transition: border-color 0.2s;
+}
+
+.qa-box:hover {
+    border-color: #CBD5E1;
+}
+
+.qa-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.qa-text {
+    font-size: 0.9rem;
     color: #334155;
     line-height: 1.6;
     margin: 0;
 }
 
-/* Referências */
-.ref-block {
-    background: #FFFFFF;
+.norma-container {
+    background: #F8FAFC;
     border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 1.3rem;
+    border-radius: 12px;
+    padding: 1.1rem;
     margin-bottom: 1.2rem;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
 }
 
-.ref-badge {
+.norma-badge {
     display: inline-block;
     padding: 0.25rem 0.65rem;
     border-radius: 6px;
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    color: #1D4ED8;
+    background: #DBEAFE;
+    color: #1E40AF;
     font-weight: 700;
-    font-size: 0.82rem;
-    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
 }
 
-.ref-scope {
+.norma-scope {
     font-size: 0.82rem;
     color: #64748B;
-    margin-bottom: 0.8rem;
     line-height: 1.4;
+    margin-bottom: 0.6rem;
 }
 </style>
 """
@@ -488,177 +447,202 @@ if analisar_clicado:
         except Exception as e:
             st.error(f"❌ Ocorreu um erro durante o processamento do artigo: {e}")
 
-# ----------------- EXIBIÇÃO EM ABAS E LAYOUT REFINADO -----------------
+# ----------------- EXIBIÇÃO EM CARDS REFORMULADOS -----------------
 if "resultado_analise" in st.session_state and st.session_state["resultado_analise"] is not None:
     res: AnaliseArtigo = st.session_state["resultado_analise"]
-    nome_doc = st.session_state.get("nome_artigo_analisado", "Artigo Científico")
+    nome_doc = st.session_state.get("nome_artigo_analisado", "Artigo")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
-    # 1. HEADER DO ARTIGO ANALISADO
-    st.markdown(
-        f"""
-        <div class="article-header">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem;">
-                <span class="ref-badge">✅ Análise Acadêmica Concluída</span>
-                <span style="font-size: 0.8rem; color: #64748B;">📄 {nome_doc}</span>
+    # CARD 1: VISÃO GERAL & TL;DR
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+                <span>📌</span> Visão Geral do Artigo
             </div>
-            <div class="article-title-pt">{res.titulo_traduzido}</div>
-            <div class="article-title-orig">Original: {res.titulo_original}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # 2. NAVEGAÇÃO POR ABAS MODERNAS
-    tab_resumo, tab_perguntas, tab_fichamento, tab_referencias = st.tabs([
-        "📌 Síntese & Resumos",
-        "🔬 Rigor & Perguntas",
-        "📖 Fichamento Completo",
-        "📚 Referências Normatizadas"
-    ])
-
-    # ABA 1: SÍNTESE E RESUMOS
-    with tab_resumo:
-        # TL;DR em Destaque
+            """,
+            unsafe_allow_html=True,
+        )
         st.markdown(
             f"""
-            <div class="tldr-card">
-                <div class="tldr-badge">⚡ Síntese Executiva (TL;DR)</div>
-                <p class="tldr-text">{res.resumo_curto}</p>
+            <h2 style="font-size: 1.45rem; font-weight: 800; color: #0F172A; line-height: 1.3; margin: 0 0 0.4rem 0;">
+                {res.titulo_traduzido}
+            </h2>
+            <div style="color: #64748B; font-size: 0.95rem; margin-bottom: 1.2rem;">
+                <b>Original:</b> <i>{res.titulo_original}</i>
+            </div>
+            <div style="background: #F0F7FF; border: 1px solid #BFDBFE; border-left: 4px solid #2563EB; border-radius: 12px; padding: 1.1rem 1.3rem; margin-top: 0.8rem;">
+                <div style="color: #1E40AF; font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    <span>⚡</span> Síntese Executiva (TL;DR)
+                </div>
+                <div style="color: #1E3A8A; font-size: 0.96rem; line-height: 1.65; margin: 0;">
+                    {res.resumo_curto}
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        st.markdown("#### 📄 Texto do Resumo (Abstract)")
-        subtab_trad, subtab_orig = st.tabs(["🇧🇷 Resumo Traduzido (Português)", "🇺🇸 Resumo Original (Idioma do Artigo)"])
-        
-        with subtab_trad:
-            with st.container(border=True):
-                st.markdown(res.resumo_traduzido)
+    st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
-        with subtab_orig:
-            with st.container(border=True):
-                st.markdown(res.resumo_original)
+    # CARD 2: RESUMOS & FICHAMENTO
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.8rem;">
+                <span>📑</span> Sínteses & Resumo Expandido
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    # ABA 2: RIGOR E PERGUNTAS FUNDAMENTAIS
-    with tab_perguntas:
-        pf = res.perguntas_fundamentais
-        col_esq, col_dir = st.columns(2)
+        tab_trad, tab_orig, tab_comp = st.tabs([
+            "🇧🇷 Resumo Traduzido",
+            "🇺🇸 Abstract Original",
+            "📖 Fichamento Completo"
+        ])
 
-        with col_esq:
+        with tab_trad:
+            st.markdown(f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_traduzido}</div>", unsafe_allow_html=True)
+
+        with tab_orig:
+            st.markdown(f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_original}</div>", unsafe_allow_html=True)
+
+        with tab_comp:
+            st.markdown(f"<div style='color: #1E293B; line-height: 1.8; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_completo}</div>", unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+
+    # CARD 3: RIGOR METODOLÓGICO & PERGUNTAS FUNDAMENTAIS
+    pf = res.perguntas_fundamentais
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">
+                <span>🔬</span> Avaliação Científica & Rigor Metodológico
+            </div>
+            <p style="color: #64748B; font-size: 0.88rem; margin-bottom: 1.2rem;">
+                Análise crítica fundamentada sobre a maturidade acadêmica, métodos e diferenciais do estudo:
+            </p>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        col_a, col_b = st.columns(2)
+
+        with col_a:
             st.markdown(
                 f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>🎯</span> Assunto Principal & Lacuna</div>
-                    <p class="qa-content">{pf.assunto_principal}</p>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🎯</span> Assunto Principal
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.assunto_principal}</p>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🔍</span> Foco & Hipótese de Pesquisa
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.foco}</p>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🧠</span> Arcabouço Teórico
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.foco_teorico}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
+
+        with col_b:
             st.markdown(
                 f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>🔍</span> Foco & Hipótese de Pesquisa</div>
-                    <p class="qa-content">{pf.foco}</p>
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>🚀</span> Novidades & Contribuições
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.novidades_do_artigo}</p>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>🧠</span> Foco Teórico & Epistemologia</div>
-                    <p class="qa-content">{pf.foco_teorico}</p>
+
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>⚖️</span> Fundamentação dos Dados
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.fundamentacao}</p>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0F172A; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <span>📊</span> Qualidade & Limitações
+                    </div>
+                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.qualidade_artigo}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-        with col_dir:
-            st.markdown(
-                f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>🚀</span> Novidades & Contribuições Inéditas</div>
-                    <p class="qa-content">{pf.novidades_do_artigo}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>⚖️</span> Rigor da Fundamentação & Evidências</div>
-                    <p class="qa-content">{pf.fundamentacao}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                f"""
-                <div class="qa-card">
-                    <div class="qa-header"><span>📊</span> Qualidade Metodológica & Limitações</div>
-                    <p class="qa-content">{pf.qualidade_artigo}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+    st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
-    # ABA 3: FICHAMENTO COMPLETO
-    with tab_fichamento:
-        st.markdown("#### 📖 Síntese Aprofundada e Estruturada")
-        with st.container(border=True):
-            st.markdown(res.resumo_completo)
+    # CARD 4: REFERÊNCIAS NORMATIZADAS
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">
+                <span>📚</span> Referências Bibliográficas Normatizadas
+            </div>
+            <p style="color: #64748B; font-size: 0.88rem; margin-bottom: 1.2rem;">
+                Formatadas e prontas para você copiar e colar diretamente no seu trabalho:
+            </p>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    # ABA 4: REFERÊNCIAS NORMATIZADAS
-    with tab_referencias:
         refs = res.referencias
-        st.markdown("#### 📚 Referências Bibliográficas Pré-Formatadas")
-        st.caption("Clique no botão de cópia no canto superior direito de cada bloco para colar diretamente no seu documento.")
 
         normas_info = {
             "ABNT": {
                 "valor": refs.abnt,
-                "nome_completo": "ABNT NBR 6023 (Associação Brasileira de Normas Técnicas)",
-                "escopo": "<b>Onde impera:</b> TCCs, dissertações, teses, relatórios técnicos e periódicos nacionais da maioria das universidades brasileiras.",
+                "escopo": "TCCs, dissertações, teses, relatórios técnicos e universidades brasileiras (NBR 6023).",
             },
             "APA": {
                 "valor": refs.apa,
-                "nome_completo": "APA 7ª Edição (American Psychological Association)",
-                "escopo": "<b>Onde impera:</b> Psicologia, Educação, Administração, Ciências Sociais Aplicadas e submissões para periódicos internacionais (ou nacionais indexados, ex: SciELO).",
+                "escopo": "Psicologia, Educação, Administração, Ciências Sociais e periódicos internacionais (SciELO/Redalyc).",
             },
             "Vancouver": {
                 "valor": refs.vancouver,
-                "nome_completo": "Vancouver (International Committee of Medical Journal Editors)",
-                "escopo": "<b>Onde impera:</b> Medicina, Enfermagem, Odontologia, Farmácia e Ciências da Saúde em geral.",
+                "escopo": "Medicina, Enfermagem, Farmácia, Odontologia e Ciências da Saúde em geral.",
             },
             "IEEE": {
                 "valor": refs.ieee,
-                "nome_completo": "IEEE (Institute of Electrical and Electronics Engineers)",
-                "escopo": "<b>Onde impera:</b> Engenharia Elétrica, Eletrônica, Ciência da Computação, Robótica e Telecomunicações.",
+                "escopo": "Engenharia Elétrica, Eletrônica, Ciência da Computação, Robótica e Telecomunicações.",
             },
             "Chicago": {
                 "valor": refs.chicago,
-                "nome_completo": "Chicago Manual of Style (Autor-Data)",
-                "escopo": "<b>Onde impera:</b> História, Filosofia e Belas Artes, especialmente pelo uso intensivo de notas explicativas e bibliografia final.",
+                "escopo": "História, Filosofia e Belas Artes (sistema autor-data ou notas de rodapé).",
             },
             "MLA": {
                 "valor": refs.mla,
-                "nome_completo": "MLA 9ª Edição (Modern Language Association)",
-                "escopo": "<b>Onde impera:</b> Estudos de Letras, Linguística e Literatura voltados a publicações em línguas estrangeiras.",
+                "escopo": "Estudos de Letras, Linguística e Literatura voltados a publicações em línguas estrangeiras.",
             },
         }
 
         alguma_norma_exibida = False
-        for sigla, info in normas_info.items():
+        for nome_norma, info in normas_info.items():
             if info["valor"]:
                 alguma_norma_exibida = True
                 st.markdown(
                     f"""
-                    <div class="ref-block">
-                        <span class="ref-badge">{info['nome_completo']}</span>
-                        <div class="ref-scope">{info['escopo']}</div>
+                    <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-top: 0.8rem; margin-bottom: 0.3rem;">
+                        <span style="background: #DBEAFE; color: #1E40AF; font-weight: 700; font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 6px;">
+                            {nome_norma}
+                        </span>
+                        <span style="font-size: 0.8rem; color: #64748B;">
+                            {info['escopo']}
+                        </span>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -666,4 +650,4 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
                 st.code(info["valor"], language="markdown")
 
         if not alguma_norma_exibida:
-            st.info("Nenhuma norma bibliográfica foi selecionada no momento da análise.")
+            st.info("Nenhuma norma bibliográfica foi selecionada para exibição.")
