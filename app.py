@@ -32,23 +32,6 @@ header {visibility: hidden;}
     max-width: 860px !important;
 }
 
-/* Badges e Tags */
-.academic-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.35rem 0.9rem;
-    border-radius: 9999px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(79, 70, 229, 0.12) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.25);
-    color: #1D4ED8;
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-}
-
 /* Header & Capa */
 .hero-title {
     font-size: 2.5rem !important;
@@ -223,9 +206,6 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 # ----------------- CAPA DO APP -----------------
 st.markdown(
     """
-    <div class="academic-badge">
-        <span>🔬</span> PIBIC • Pesquisa & Iniciação Científica
-    </div>
     <h1 class="hero-title">Analisador Inteligente de Artigos Científicos</h1>
     <p class="hero-subtitle">
         Acelere sua revisão bibliográfica e fichamento acadêmico. Faça upload do PDF de qualquer artigo 
