@@ -165,11 +165,11 @@ hr {
     gap: 0.5rem;
 }
 
-/* Botão de Análise */
-div.stButton > button:first-child {
+/* Botão Principal de Análise */
+div[class*="st-key-btn_analisar_principal"] > button {
     background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
     color: #FFFFFF !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     font-size: 1.05rem !important;
     padding: 0.85rem 2rem !important;
     border-radius: 12px !important;
@@ -179,9 +179,29 @@ div.stButton > button:first-child {
     width: 100% !important;
 }
 
-div.stButton > button:first-child:hover {
+div[class*="st-key-btn_analisar_principal"] > button:hover {
     background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
     box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Botões de Download de Relatório */
+div[data-testid="stDownloadButton"] > button {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    padding: 0.75rem 1.8rem !important;
+    border-radius: 12px !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
+    transition: all 0.2s ease-in-out !important;
+    width: 100% !important;
+}
+
+div[data-testid="stDownloadButton"] > button:hover {
+    background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4) !important;
     transform: translateY(-1px) !important;
 }
 
@@ -309,55 +329,75 @@ div.stButton > button:first-child:hover {
     margin-bottom: 0.6rem;
 }
 
-/* WIDGET FLUTUANTE DE CHAT (FAB + POPUP) */
+/* =========================================================================
+   WIDGET FLUTUANTE DE CHAT (FAB + POPUP PIXEL-PERFECT)
+   ========================================================================= */
+
+/* 1. Botão Flutuante Circular (FAB) */
 div[class*="st-key-floating_chat_fab"] {
     position: fixed !important;
     bottom: 24px !important;
     right: 24px !important;
     z-index: 999999 !important;
-    width: auto !important;
+    width: 58px !important;
+    height: 58px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
 }
 
 div[class*="st-key-floating_chat_fab"] > button {
-    width: 60px !important;
-    height: 60px !important;
-    min-width: 60px !important;
-    min-height: 60px !important;
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    max-width: 58px !important;
+    max-height: 58px !important;
     border-radius: 50% !important;
     background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%) !important;
     color: #FFFFFF !important;
-    font-size: 1.5rem !important;
+    font-size: 1.45rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45) !important;
     border: 2px solid rgba(255, 255, 255, 0.25) !important;
     padding: 0 !important;
+    margin: 0 !important;
     cursor: pointer !important;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
 }
 
 div[class*="st-key-floating_chat_fab"] > button:hover {
-    transform: scale(1.1) !important;
-    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.6) !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6) !important;
 }
 
 div[class*="st-key-floating_chat_fab"] > button:active {
     transform: scale(0.95) !important;
 }
 
+div[class*="st-key-floating_chat_fab"] > button p {
+    color: #FFFFFF !important;
+    font-size: 1.45rem !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* 2. Janela Flutuante do Chat (Card Pop-up) */
 div[class*="st-key-floating_chat_card"] {
     position: fixed !important;
-    bottom: 96px !important;
+    bottom: 94px !important;
     right: 24px !important;
-    width: 390px !important;
+    width: 385px !important;
     max-width: calc(100vw - 48px) !important;
     background: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
     border-radius: 20px !important;
     box-shadow: 0 20px 45px -8px rgba(15, 23, 42, 0.22), 0 8px 16px -4px rgba(15, 23, 42, 0.08) !important;
     z-index: 999998 !important;
-    padding: 1.1rem !important;
+    padding: 1.15rem 1.2rem !important;
     animation: popupFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
@@ -372,89 +412,164 @@ div[class*="st-key-floating_chat_card"] {
     }
 }
 
-div[class*="st-key-chat_header_btn"] > button {
+/* Remove caixas/bordas duplas do container de rolagem interno */
+div[class*="st-key-floating_chat_card"] [data-testid="stVerticalBlockBorderWrapper"] {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* 3. Botões do Cabeçalho do Chat (Reset 🔄 e Fechar ✕) */
+div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+}
+
+div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button {
     background: #F8FAFC !important;
+    background-color: #F8FAFC !important;
     border: 1px solid #E2E8F0 !important;
     border-radius: 8px !important;
-    color: #64748B !important;
-    padding: 0.2rem 0.5rem !important;
+    color: #475569 !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    padding: 0 !important;
+    margin: 0 !important;
     font-size: 0.85rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     box-shadow: none !important;
-    width: auto !important;
-    height: auto !important;
-    min-height: unset !important;
     transition: all 0.15s ease !important;
 }
 
-div[class*="st-key-chat_header_btn"] > button:hover {
+div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button:hover {
     background: #F1F5F9 !important;
+    background-color: #F1F5F9 !important;
     color: #0F172A !important;
     border-color: #CBD5E1 !important;
     transform: none !important;
 }
 
-div[class*="st-key-pill_"] > button {
-    background: #F8FAFC !important;
-    border: 1px solid #E2E8F0 !important;
+div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button p {
+    color: inherit !important;
+    font-size: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+/* 4. Pílulas de Sugestão de Perguntas (Chips Delicados) */
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
     border-radius: 9999px !important;
     color: #334155 !important;
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
     font-weight: 500 !important;
-    padding: 0.35rem 0.75rem !important;
+    padding: 0.45rem 0.95rem !important;
     text-align: left !important;
     line-height: 1.35 !important;
-    box-shadow: none !important;
-    margin-bottom: 0.35rem !important;
-    transition: all 0.15s ease !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+    margin-bottom: 0.45rem !important;
+    width: 100% !important;
+    transition: all 0.15s ease-in-out !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
 }
 
-div[class*="st-key-pill_"] > button:hover {
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button:hover {
     background: #EFF6FF !important;
-    border-color: #BFDBFE !important;
+    background-color: #EFF6FF !important;
+    border-color: #3B82F6 !important;
     color: #1D4ED8 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08) !important;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12) !important;
 }
 
-/* Formulário e Input do Chat Pop-up */
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button p {
+    color: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+}
+
+/* 5. Rodapé: Formulário, Input e Botão de Envio */
 div[class*="st-key-floating_chat_card"] [data-testid="stForm"] {
     border: none !important;
-    padding: 0 !important;
-    margin-top: 0.6rem !important;
+    padding: 0.3rem 0 0 0 !important;
+    margin: 0 !important;
     background: transparent !important;
 }
 
 div[class*="st-key-floating_chat_card"] input[type="text"] {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     border: 1px solid #CBD5E1 !important;
     font-size: 0.85rem !important;
-    height: 42px !important;
+    height: 40px !important;
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    padding: 0 0.85rem !important;
+    transition: all 0.15s ease !important;
 }
 
 div[class*="st-key-floating_chat_card"] input[type="text"]:focus {
     border-color: #2563EB !important;
+    background: #FFFFFF !important;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+}
+
+div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 40px !important;
 }
 
 div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button {
     background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
     color: #FFFFFF !important;
-    border-radius: 10px !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    width: 100% !important;
-    font-size: 1.15rem !important;
+    border-radius: 12px !important;
+    height: 40px !important;
+    width: 40px !important;
+    min-height: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
     padding: 0 !important;
+    margin: 0 !important;
+    font-size: 1.15rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
     border: none !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button:hover {
     background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
-    transform: translateY(-1px) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45) !important;
+}
+
+div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button p {
+    color: #FFFFFF !important;
+    font-size: 1.15rem !important;
+    margin: 0 !important;
+    line-height: 1 !important;
 }
 </style>
 """
@@ -563,7 +678,7 @@ with st.container(border=True):
     st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-label"><span>⚡</span> 3. Processamento da IA</div>', unsafe_allow_html=True)
 
-    analisar_clicado = st.button("🚀 Fazer Análise do Artigo", use_container_width=True)
+    analisar_clicado = st.button("🚀 Fazer Análise do Artigo", key="btn_analisar_principal", use_container_width=True)
 
 # ----------------- EXECUÇÃO DA ANÁLISE COM GEMINI (PIPELINE EM 3 ETAPAS) -----------------
 if analisar_clicado:
@@ -866,7 +981,7 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     if is_chat_aberto:
         with st.container(key="floating_chat_card"):
             # Cabeçalho do Card Pop-up
-            col_tit, col_act1, col_act2 = st.columns([7, 1.2, 1.2])
+            col_tit, col_act1, col_act2 = st.columns([7, 1.1, 1.1], vertical_alignment="center")
             with col_tit:
                 st.markdown(
                     """
@@ -880,7 +995,7 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
                     unsafe_allow_html=True,
                 )
             with col_act1:
-                if st.button("🔄", key="chat_header_btn_clear", help="Reiniciar conversa"):
+                if st.button("↻", key="chat_header_btn_clear", help="Reiniciar conversa"):
                     st.session_state["chat_historico"] = []
                     st.rerun()
             with col_act2:
@@ -921,7 +1036,7 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
 
             # Formulário de Envio no Rodapé do Card
             with st.form(key="form_chat_popup", clear_on_submit=True):
-                col_inp, col_send = st.columns([5.2, 1.2])
+                col_inp, col_send = st.columns([5.3, 1], vertical_alignment="center")
                 with col_inp:
                     pergunta_texto = st.text_input(
                         "Mensagem",
