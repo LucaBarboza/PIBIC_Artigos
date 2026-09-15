@@ -618,6 +618,8 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
             unsafe_allow_html=True,
         )
 
+        refs = res.referencias
+
         normas_info = {
             "ABNT": refs.abnt,
             "APA": refs.apa,
