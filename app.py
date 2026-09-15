@@ -815,31 +815,49 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
 
     st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
 
-    # 1. TÍTULO TRADUZIDO
+    # 1. TÍTULO (TRADUZIDO OU ORIGINAL)
     with st.container(border=True):
-        st.markdown(
-            """
-            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
-                Título Traduzido
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"""
-            <h2 style="font-size: 1.4rem; font-weight: 800; color: #0F172A; line-height: 1.35; margin: 0 0 0.5rem 0;">
-                {res.titulo_traduzido}
-            </h2>
-            <div style="color: #64748B; font-size: 0.92rem;">
-                <b>Título Original:</b> <i>{res.titulo_original}</i>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        if res.titulo_traduzido:
+            st.markdown(
+                """
+                <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
+                    Título Traduzido
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"""
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: #0F172A; line-height: 1.35; margin: 0 0 0.5rem 0;">
+                    {res.titulo_traduzido}
+                </h2>
+                <div style="color: #64748B; font-size: 0.92rem;">
+                    <b>Título Original:</b> <i>{res.titulo_original}</i>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        else:
+            st.markdown(
+                """
+                <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
+                    Título do Artigo
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"""
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: #0F172A; line-height: 1.35; margin: 0 0 0.5rem 0;">
+                    {res.titulo_original}
+                </h2>
+                """,
+                unsafe_allow_html=True,
+            )
 
     st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
-    # 2. RESUMOS (Resumo Curto, Resumo, Resumo Traduzido, Resumo Completo)
+    # 2. RESUMOS (Resumo SEMPRE em primeiro lugar; Resumo Traduzido apenas se existir)
     with st.container(border=True):
         st.markdown(
             """
@@ -850,40 +868,69 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
             unsafe_allow_html=True,
         )
 
-        tab_curto, tab_resumo, tab_trad, tab_comp = st.tabs([
-            "Resumo Curto",
-            "Resumo",
-            "Resumo Traduzido",
-            "Resumo Completo"
-        ])
+        if res.resumo_traduzido:
+            tab_resumo, tab_trad, tab_curto, tab_comp = st.tabs([
+                "Resumo",
+                "Resumo Traduzido",
+                "Resumo Curto",
+                "Resumo Completo"
+            ])
 
-        with tab_curto:
-            st.markdown(
-                f"""
-                <div style="background: #F0F7FF; border-left: 4px solid #2563EB; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.6rem 0; color: #1E3A8A; font-size: 0.96rem; line-height: 1.65;">
-                    {res.resumo_curto}
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            with tab_resumo:
+                st.markdown(
+                    f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_original}</div>",
+                    unsafe_allow_html=True,
+                )
 
-        with tab_resumo:
-            st.markdown(
-                f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_original}</div>",
-                unsafe_allow_html=True,
-            )
+            with tab_trad:
+                st.markdown(
+                    f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_traduzido}</div>",
+                    unsafe_allow_html=True,
+                )
 
-        with tab_trad:
-            st.markdown(
-                f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_traduzido}</div>",
-                unsafe_allow_html=True,
-            )
+            with tab_curto:
+                st.markdown(
+                    f"""
+                    <div style="background: #F0F7FF; border-left: 4px solid #2563EB; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.6rem 0; color: #1E3A8A; font-size: 0.96rem; line-height: 1.65;">
+                        {res.resumo_curto}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-        with tab_comp:
-            st.markdown(
-                f"<div style='color: #1E293B; line-height: 1.8; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_completo}</div>",
-                unsafe_allow_html=True,
-            )
+            with tab_comp:
+                st.markdown(
+                    f"<div style='color: #1E293B; line-height: 1.8; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_completo}</div>",
+                    unsafe_allow_html=True,
+                )
+        else:
+            tab_resumo, tab_curto, tab_comp = st.tabs([
+                "Resumo",
+                "Resumo Curto",
+                "Resumo Completo"
+            ])
+
+            with tab_resumo:
+                st.markdown(
+                    f"<div style='color: #334155; line-height: 1.7; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_original}</div>",
+                    unsafe_allow_html=True,
+                )
+
+            with tab_curto:
+                st.markdown(
+                    f"""
+                    <div style="background: #F0F7FF; border-left: 4px solid #2563EB; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.6rem 0; color: #1E3A8A; font-size: 0.96rem; line-height: 1.65;">
+                        {res.resumo_curto}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+            with tab_comp:
+                st.markdown(
+                    f"<div style='color: #1E293B; line-height: 1.8; font-size: 0.95rem; padding: 0.6rem 0;'>{res.resumo_completo}</div>",
+                    unsafe_allow_html=True,
+                )
 
     st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 

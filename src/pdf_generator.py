@@ -204,8 +204,11 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
 
     # ---------------- 1. CABEÇALHO & TÍTULOS ----------------
     story.append(Paragraph("RELATÓRIO DE ANÁLISE CIENTÍFICA", style_tag))
-    story.append(Paragraph(_escapar_texto(analise.titulo_traduzido), style_titulo_trad))
-    story.append(Paragraph(f"<b>Título Original:</b> <i>{_escapar_texto(analise.titulo_original)}</i>", style_titulo_orig))
+    if analise.titulo_traduzido:
+        story.append(Paragraph(_escapar_texto(analise.titulo_traduzido), style_titulo_trad))
+        story.append(Paragraph(f"<b>Título Original:</b> <i>{_escapar_texto(analise.titulo_original)}</i>", style_titulo_orig))
+    else:
+        story.append(Paragraph(_escapar_texto(analise.titulo_original), style_titulo_trad))
 
     meta_itens = []
     if getattr(analise, "area_conhecimento", None):
@@ -239,13 +242,14 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     story.append(Paragraph("Resumos", style_secao))
     story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#E2E8F0"), spaceAfter=10))
 
-    story.append(Paragraph("Resumo Traduzido", style_subsecao))
-    story.append(Paragraph(_escapar_texto(analise.resumo_traduzido), style_corpo))
-    story.append(Spacer(1, 6))
-
-    story.append(Paragraph("Resumo (Original)", style_subsecao))
+    story.append(Paragraph("Resumo", style_subsecao))
     story.append(Paragraph(_escapar_texto(analise.resumo_original), style_corpo))
     story.append(Spacer(1, 6))
+
+    if analise.resumo_traduzido:
+        story.append(Paragraph("Resumo Traduzido", style_subsecao))
+        story.append(Paragraph(_escapar_texto(analise.resumo_traduzido), style_corpo))
+        story.append(Spacer(1, 6))
 
     story.append(Paragraph("Resumo Completo", style_subsecao))
     story.append(Paragraph(_escapar_texto(analise.resumo_completo), style_corpo))

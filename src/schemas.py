@@ -91,8 +91,13 @@ class IdentificacaoEReferencias(BaseModel):
     titulo_original: str = Field(
         description="Título original literal do artigo científico, exatamente como redigido no PDF."
     )
-    titulo_traduzido: str = Field(
-        description="Tradução técnica fidedigna do título para o Português brasileiro culto."
+    titulo_traduzido: Optional[str] = Field(
+        default=None,
+        description=(
+            "Tradução técnica fidedigna do título para o Português brasileiro culto. "
+            "REGRA OBRIGATÓRIA: Se o título original do artigo JÁ estiver em Português, "
+            "defina este campo estritamente como null (None)."
+        ),
     )
     resumo_original: str = Field(
         description="Texto integral do resumo (abstract) original do artigo em seu idioma de origem, sem omissões."
@@ -119,10 +124,13 @@ class SintesesDoArtigo(BaseModel):
             "Deve sintetizar com precisão: (1) O problema investigado, (2) O método/experimento chave empregado, e (3) O principal achado ou conclusão alcançada."
         )
     )
-    resumo_traduzido: str = Field(
+    resumo_traduzido: Optional[str] = Field(
+        default=None,
         description=(
             "Tradução técnica, fluente e rigorosa do resumo (abstract) para o Português brasileiro formal, "
-            "preservando termos técnicos e jargões da área acadêmica do estudo."
+            "preservando termos técnicos e jargões da área acadêmica do estudo. "
+            "REGRA OBRIGATÓRIA: Se o resumo original do artigo JÁ estiver em Português, "
+            "defina este campo estritamente como null (None)."
         )
     )
     resumo_completo: str = Field(
@@ -201,10 +209,10 @@ class AnaliseArtigo(BaseModel):
     Estrutura mestra consolidada contendo todos os dados combinados das etapas.
     """
     titulo_original: str
-    titulo_traduzido: str
+    titulo_traduzido: Optional[str] = None
     resumo_original: str
     resumo_curto: str
-    resumo_traduzido: str
+    resumo_traduzido: Optional[str] = None
     resumo_completo: str
     perguntas_fundamentais: PerguntasFundamentais
     referencias: ReferenciasNormatizadas

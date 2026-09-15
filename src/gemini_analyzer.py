@@ -104,7 +104,8 @@ Analise as primeiras páginas, cabeçalhos, rodapés e metadados do artigo em PD
 
 TAREFAS OBRIGATÓRIAS:
 1. Extraia o Título Original do artigo exatamente como impresso.
-2. Forneça uma Tradução Técnica primorosa do título para o Português brasileiro.
+2. 'titulo_traduzido': Tradução técnica primorosa do título para o Português brasileiro culto.
+   REGRA OBRIGATÓRIA: Se o título original do artigo JÁ estiver em Português, NÃO traduza e defina 'titulo_traduzido' estritamente como null.
 3. Extraia o Resumo (Abstract) original na íntegra.
 4. NORMAS SOLICITADAS: [{normas_txt}].
    - Gere com exatidão milimétrica a referência bibliográfica completa do próprio artigo para CADA uma das normas listadas acima.
@@ -145,8 +146,9 @@ ATENÇÃO: NÃO SEJA CONCISO. PROIBIDAS RESPOSTAS TELEGRÁFICAS OU SUPERFICIAIS.
 Este fichamento é para suporte a Iniciação Científica (PIBIC), TCC ou Dissertação.
 
 TAREFAS OBRIGATÓRIAS:
-1. 'resumo_curto': Síntese executiva densa (TL;DR) em 2 a 3 frases densas (problema, método e achado central).
+1. 'resumo_curto': Síntese executiva densa (TL;DR) em 2 a 3 frases densas (problema, método e achado central) em Português.
 2. 'resumo_traduzido': Tradução acadêmica fluente e impecável do resumo original para o português brasileiro formal.
+   REGRA OBRIGATÓRIA: Se o resumo original do artigo JÁ estiver em Português, NÃO traduza e defina 'resumo_traduzido' estritamente como null.
 3. 'resumo_completo': FICHAMENTO ANALÍTICO EXTENSO (Mínimo de 4 a 6 parágrafos substanciais):
    - Detalhe o problema de pesquisa, contexto e motivação científica.
    - Descreva pormenorizadamente a metodologia, desenhos experimentais, variáveis, arquiteturas ou métodos teóricos.
