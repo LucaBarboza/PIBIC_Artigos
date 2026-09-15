@@ -1,6 +1,10 @@
 import io
 from typing import Dict, Any, Optional
-from pypdf import PdfReader
+
+try:
+    from pypdf import PdfReader
+except ImportError:
+    PdfReader = None
 
 
 def estimar_tempo_leitura(pdf_bytes: Optional[bytes], densidade: str = "media") -> Dict[str, Any]:
@@ -27,7 +31,7 @@ def estimar_tempo_leitura(pdf_bytes: Optional[bytes], densidade: str = "media") 
     total_palavras = 0
     eh_escaneado = False
 
-    if pdf_bytes:
+    if pdf_bytes and PdfReader is not None:
         try:
             reader = PdfReader(io.BytesIO(pdf_bytes))
             num_paginas = len(reader.pages)
