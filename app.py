@@ -308,6 +308,174 @@ div.stButton > button:first-child:hover {
     line-height: 1.4;
     margin-bottom: 0.6rem;
 }
+
+/* ===================================================================== */
+/* CHATBOT FLUTUANTE ESTILO ENIALABS / POPUP FLUTUANTE                   */
+/* ===================================================================== */
+
+/* Botão Launcher Circular Flutuante (Canto Inferior Direito) */
+div[data-testid="stVerticalBlock"]:has(#floating-launcher-marker),
+div[data-testid="element-container"]:has(#floating-launcher-marker),
+div:has(> #floating-launcher-marker) {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    z-index: 999999 !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+div:has(#floating-launcher-marker) button {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #1E085A 0%, #3B0764 45%, #581C87 100%) !important;
+    color: #FFFFFF !important;
+    font-size: 1.55rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(59, 7, 100, 0.45) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div:has(#floating-launcher-marker) button:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 10px 30px rgba(88, 28, 135, 0.65) !important;
+}
+
+/* Janela Flutuante do Chatbot (Popup estilo EniaLabs) */
+[data-testid="stVerticalBlockBorderWrapper"]:has(#floating-chat-window-marker) {
+    position: fixed !important;
+    bottom: 96px !important;
+    right: 24px !important;
+    width: 380px !important;
+    max-width: calc(100vw - 36px) !important;
+    height: 540px !important;
+    max-height: calc(100vh - 120px) !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #D8B4FE !important;
+    border-radius: 24px !important;
+    box-shadow: 0 16px 40px -4px rgba(76, 29, 149, 0.22), 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+    padding: 1.1rem 1.15rem 1rem 1.15rem !important;
+    margin-bottom: 0 !important;
+    z-index: 999998 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    animation: popupFadeIn 0.22s ease-out !important;
+}
+
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Pílulas de sugestão (estilo EniaLabs) */
+.chat-pill-btn button {
+    background: #FFFFFF !important;
+    border: 1.2px solid #C084FC !important;
+    border-radius: 9999px !important;
+    color: #4C1D95 !important;
+    font-size: 0.77rem !important;
+    font-weight: 500 !important;
+    padding: 0.38rem 0.8rem !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    height: auto !important;
+    text-align: left !important;
+    margin-bottom: 0.4rem !important;
+    transition: all 0.15s ease-in-out !important;
+}
+
+.chat-pill-btn button:hover {
+    background: #FAF5FF !important;
+    border-color: #9333EA !important;
+    color: #3B0764 !important;
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.2) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Input e botão no rodapé do popup */
+div:has(#floating-chat-window-marker) div[data-testid="stTextInput"] {
+    margin-bottom: 0 !important;
+}
+
+div:has(#floating-chat-window-marker) div[data-testid="stTextInput"] input {
+    border-radius: 12px !important;
+    border: 1.5px solid #D8B4FE !important;
+    font-size: 0.84rem !important;
+    padding: 0.5rem 0.75rem !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+}
+
+div:has(#floating-chat-window-marker) div[data-testid="stTextInput"] input:focus {
+    border-color: #9333EA !important;
+    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25) !important;
+}
+
+div:has(#floating-chat-window-marker) .chat-send-btn button {
+    background: #DDD6FE !important;
+    color: #6D28D9 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    height: 40px !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+div:has(#floating-chat-window-marker) .chat-send-btn button:hover {
+    background: #C4B5FD !important;
+    color: #4C1D95 !important;
+    transform: scale(1.05) !important;
+}
+
+/* Botões do cabeçalho (reset e close) */
+div:has(#floating-chat-window-marker) .chat-icon-btn button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #64748B !important;
+    font-size: 1.1rem !important;
+    padding: 0 !important;
+    height: 30px !important;
+    width: 30px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+div:has(#floating-chat-window-marker) .chat-icon-btn button:hover {
+    background: #F1F5F9 !important;
+    color: #0F172A !important;
+}
 </style>
 """
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
@@ -690,90 +858,33 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
         if not alguma_norma_exibida:
             st.info("Nenhuma referência selecionada para exibição.")
 
-    # 5. PERGUNTE AO ARTIGO (CHAT COM LONG CONTEXT & STRICT GROUNDING)
-    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+    # Chamada visual para o Assistente Flutuante
+    st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
     with st.container(border=True):
-        st.markdown(
-            """
-            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
-                Pergunte ao Artigo
-            </div>
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin: 0 0 0.4rem 0;">
-                💬 Chat com Texto Integral (Strict Grounding)
-            </h3>
-            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1.2rem; line-height: 1.5;">
-                Tire dúvidas pontuais sobre metodologia, estatísticas, limitações ou resultados diretamente com o PDF integral.
-                As respostas utilizam <b>Google Gemini Long Context</b> com <b>grounding estrito</b> (apenas evidências do documento com indicação de seção/página, sem alucinação).
-            </p>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        if "chat_historico" not in st.session_state:
-            st.session_state["chat_historico"] = []
-
-        # Botões de perguntas rápidas sugeridas
-        st.markdown(
-            "<div style='font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;'>💡 Sugestões de perguntas rápidas:</div>",
-            unsafe_allow_html=True,
-        )
-        col_sug1, col_sug2, col_sug3 = st.columns(3)
-        pergunta_sugerida = None
-        with col_sug1:
-            if st.button("⚠️ Quais as limitações?", key="btn_sug_limitacoes", use_container_width=True):
-                pergunta_sugerida = "Quais são as principais limitações, ameaças à validade ou ressalvas apontadas expressamente pelos autores no artigo?"
-        with col_sug2:
-            if st.button("🔬 Metodologia e amostra?", key="btn_sug_metodo", use_container_width=True):
-                pergunta_sugerida = "Como foi composta a metodologia da pesquisa, qual o tamanho e perfil da amostra e quais instrumentos de coleta foram adotados?"
-        with col_sug3:
-            if st.button("📊 Principais métricas?", key="btn_sug_resultados", use_container_width=True):
-                pergunta_sugerida = "Quais foram os principais dados quantitativos, métricas estatísticas e resultados numéricos reportados no artigo?"
-
-        # Área de histórico de mensagens
-        for msg in st.session_state["chat_historico"]:
-            avatar = "🧑‍🔬" if msg["role"] == "user" else "🤖"
-            with st.chat_message(msg["role"], avatar=avatar):
-                st.markdown(msg["content"])
-
-        # Input de chat
-        pergunta_digitada = st.chat_input("Faça uma pergunta sobre o artigo (ex: Quais técnicas estatísticas foram usadas?)...")
-        pergunta_final = pergunta_sugerida or pergunta_digitada
-
-        if pergunta_final:
-            st.session_state["chat_historico"].append({"role": "user", "content": pergunta_final})
-            with st.chat_message("user", avatar="🧑‍🔬"):
-                st.markdown(pergunta_final)
-
-            with st.chat_message("assistant", avatar="🤖"):
-                with st.spinner("Consultando o texto integral do artigo via Gemini..."):
-                    try:
-                        pdf_bytes_chat = st.session_state.get("pdf_bytes_atual")
-                        if not pdf_bytes_chat and uploaded_file is not None:
-                            pdf_bytes_chat = uploaded_file.getvalue()
-
-                        if not pdf_bytes_chat:
-                            resposta = "⚠️ Arquivo do artigo não encontrado na memória. Por favor, reenvie o PDF para habilitar o chat."
-                        else:
-                            resposta = responder_pergunta_artigo(
-                                pdf_bytes=pdf_bytes_chat,
-                                pergunta=pergunta_final,
-                                historico_chat=st.session_state["chat_historico"][:-1],
-                                nome_arquivo=nome_doc,
-                            )
-                    except Exception as chat_err:
-                        resposta = f"❌ Ocorreu um erro ao consultar o artigo: {chat_err}"
-
-                    st.markdown(resposta)
-                    st.session_state["chat_historico"].append({"role": "assistant", "content": resposta})
-
-        # Botão de limpar histórico se houver mensagens
-        if st.session_state["chat_historico"]:
-            st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
-            if st.button("🗑️ Limpar conversa", key="btn_limpar_chat"):
-                st.session_state["chat_historico"] = []
+        col_banner_txt, col_banner_btn = st.columns([4, 1])
+        with col_banner_txt:
+            st.markdown(
+                """
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.6rem;">💬</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 1rem; color: #1E085A;">
+                            Dúvidas sobre o artigo? Converse com o assistente inteligente
+                        </div>
+                        <div style="font-size: 0.84rem; color: #64748B;">
+                            Tire dúvidas específicas sobre metodologia, amostra e resultados via Gemini Long Context.
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        with col_banner_btn:
+            if st.button("Abrir Chat 💬", key="btn_abrir_chat_banner", use_container_width=True):
+                st.session_state["chat_widget_aberto"] = True
                 st.rerun()
 
-    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
     st.download_button(
         label="📥 Baixar Relatório Completo em PDF",
         data=pdf_bytes,
@@ -782,3 +893,158 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
         use_container_width=True,
         key="btn_download_fim",
     )
+
+# =====================================================================
+# WIDGET FLUTUANTE DE CHAT (ESTILO ENIALABS / STRICT GROUNDING)
+# =====================================================================
+
+if "chat_widget_aberto" not in st.session_state:
+    st.session_state["chat_widget_aberto"] = False
+
+if "chat_historico" not in st.session_state:
+    st.session_state["chat_historico"] = []
+
+# Se o widget estiver aberto, desenha a janela popup estilo EniaLabs
+if st.session_state["chat_widget_aberto"]:
+    with st.container(border=True):
+        st.markdown('<div id="floating-chat-window-marker"></div>', unsafe_allow_html=True)
+
+        # 1. Cabeçalho do Chatbot
+        c_title, c_reset, c_close = st.columns([7, 1, 1])
+        with c_title:
+            st.markdown(
+                """
+                <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; line-height: 1.2;">
+                    EniaLabs <span style="font-size: 0.72rem; font-weight: 600; color: #6D28D9; background: #F3E8FF; padding: 2px 7px; border-radius: 6px; margin-left: 4px;">PIBIC</span>
+                </div>
+                <div style="font-size: 0.73rem; color: #64748B; margin-top: 3px; line-height: 1.35;">
+                    Assistente do artigo científico. As respostas são geradas por IA e estritamente fundamentadas no PDF.
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        with c_reset:
+            st.markdown('<div class="chat-icon-btn">', unsafe_allow_html=True)
+            if st.button("🔄", key="btn_popup_reset", help="Limpar conversa"):
+                st.session_state["chat_historico"] = []
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+        with c_close:
+            st.markdown('<div class="chat-icon-btn">', unsafe_allow_html=True)
+            if st.button("✕", key="btn_popup_close", help="Fechar chat"):
+                st.session_state["chat_widget_aberto"] = False
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown("<hr style='margin: 0.55rem 0 0.7rem 0 !important; opacity: 0.4;'>", unsafe_allow_html=True)
+
+        # 2. Corpo do Chat (Scrollable)
+        pergunta_para_enviar = None
+
+        chat_body = st.container(height=310, border=False)
+        with chat_body:
+            # Se não há mensagens ainda, exibe as pílulas de sugestão estilo EniaLabs
+            if not st.session_state["chat_historico"]:
+                st.markdown(
+                    """
+                    <div style="color: #64748B; font-size: 0.78rem; margin-bottom: 0.6rem; line-height: 1.4;">
+                        Tire dúvidas sobre o artigo ou selecione uma pergunta rápida:
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                sugestoes = [
+                    ("Dá pra saber as limitações?", "Quais são as principais limitações, ressalvas ou ameaças à validade apontadas expressamente pelos autores no artigo?"),
+                    ("Qual a metodologia e amostra?", "Como foi composta a metodologia da pesquisa, qual o tamanho e perfil da amostra e quais instrumentos de coleta foram adotados?"),
+                    ("Quais os principais resultados?", "Quais foram os principais dados quantitativos, métricas estatísticas e resultados numéricos reportados no artigo?"),
+                    ("Qual a fundamentação teórica?", "Qual o foco específico, hipótese de pesquisa e referencial teórico adotado pelos autores?"),
+                    ("O que os autores concluíram?", "Quais foram as conclusões finais e implicações práticas apresentadas pelos autores?"),
+                ]
+
+                for idx, (label_sug, prompt_sug) in enumerate(sugestoes):
+                    st.markdown('<div class="chat-pill-btn">', unsafe_allow_html=True)
+                    if st.button(label_sug, key=f"sug_pill_{idx}", use_container_width=True):
+                        pergunta_para_enviar = prompt_sug
+                    st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                # Exibe histórico de mensagens com estilo de balões elegante
+                for msg in st.session_state["chat_historico"]:
+                    if msg["role"] == "user":
+                        st.markdown(
+                            f"""
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 0.6rem;">
+                                <div style="background: linear-gradient(135deg, #4F46E5, #6D28D9); color: #FFFFFF; border-radius: 16px 16px 4px 16px; padding: 0.55rem 0.85rem; font-size: 0.82rem; max-width: 85%; line-height: 1.45; word-break: break-word;">
+                                    {msg["content"]}
+                                </div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        st.markdown(
+                            f"""
+                            <div style="display: flex; justify-content: flex-start; margin-bottom: 0.6rem;">
+                                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; color: #1E293B; border-radius: 16px 16px 16px 4px; padding: 0.6rem 0.85rem; font-size: 0.82rem; max-width: 90%; line-height: 1.5; word-break: break-word;">
+                                    {msg["content"]}
+                                </div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+        # 3. Rodapé com formulário de envio (Input + botão com seta)
+        with st.form(key="form_chat_popup", clear_on_submit=True):
+            col_inp, col_btn = st.columns([5, 1])
+            with col_inp:
+                texto_digitado = st.text_input(
+                    label="Pergunta",
+                    placeholder="Pergunte sobre o artigo...",
+                    label_visibility="collapsed",
+                    key="input_popup_chat",
+                )
+            with col_btn:
+                st.markdown('<div class="chat-send-btn">', unsafe_allow_html=True)
+                btn_sub = st.form_submit_button("➔")
+                st.markdown('</div>', unsafe_allow_html=True)
+
+        if btn_sub and texto_digitado:
+            pergunta_para_enviar = texto_digitado
+
+        # 4. Processamento da pergunta com Strict Grounding e Long Context
+        if pergunta_para_enviar:
+            pdf_bytes_chat = st.session_state.get("pdf_bytes_atual")
+            if not pdf_bytes_chat and uploaded_file is not None:
+                pdf_bytes_chat = uploaded_file.getvalue()
+                st.session_state["pdf_bytes_atual"] = pdf_bytes_chat
+
+            if not pdf_bytes_chat:
+                st.session_state["chat_historico"].append({"role": "user", "content": pergunta_para_enviar})
+                st.session_state["chat_historico"].append({
+                    "role": "assistant",
+                    "content": "⚠️ Por favor, faça o upload e a análise de um PDF de artigo científico para iniciar a conversa.",
+                })
+                st.rerun()
+            else:
+                st.session_state["chat_historico"].append({"role": "user", "content": pergunta_para_enviar})
+                with st.spinner("Consultando o documento integral via Gemini..."):
+                    try:
+                        nome_doc_chat = st.session_state.get("nome_artigo_analisado", "artigo.pdf")
+                        resposta = responder_pergunta_artigo(
+                            pdf_bytes=pdf_bytes_chat,
+                            pergunta=pergunta_para_enviar,
+                            historico_chat=st.session_state["chat_historico"][:-1],
+                            nome_arquivo=nome_doc_chat,
+                        )
+                    except Exception as e:
+                        resposta = f"❌ Ocorreu um erro ao consultar o artigo: {e}"
+
+                    st.session_state["chat_historico"].append({"role": "assistant", "content": resposta})
+                    st.rerun()
+
+# 5. Botão Flutuante Launcher (Sempre visível no canto inferior direito)
+with st.container():
+    st.markdown('<div id="floating-launcher-marker"></div>', unsafe_allow_html=True)
+    if st.button("💬", key="btn_floating_launcher", help="Abrir chat do artigo"):
+        st.session_state["chat_widget_aberto"] = not st.session_state.get("chat_widget_aberto", False)
+        st.rerun()
