@@ -111,6 +111,8 @@ TAREFAS OBRIGATÓRIAS:
    - Respeite rigorosamente todas as regras de autoria (caixa alta, iniciais), títulos em itálico/negrito, periódico, volume, número, páginas, mês/ano e DOI.
    - IMPORTANTE: Retorne ESTRITAMENTE a referência formatada pronta para citação. NÃO adicione comentários, explicações, observações nem frases como 'Onde impera' ou similar.
    - Para qualquer norma NÃO selecionada, defina o campo estritamente como null.
+5. Identifique a Grande Área e Subárea do Conhecimento Científico a que o estudo pertence.
+6. Extraia de 3 a 5 Palavras-Chave conceituais essenciais em Português que melhor caracterizam o estudo.
 """
 
     sys_etapa1 = (
@@ -216,4 +218,6 @@ PERGUNTAS A RESPONDER:
         resumo_completo=dados_etapa2.resumo_completo,
         perguntas_fundamentais=dados_etapa3,
         referencias=dados_etapa1.referencias,
+        area_conhecimento=dados_etapa1.area_conhecimento,
+        palavras_chave=dados_etapa1.palavras_chave,
     )

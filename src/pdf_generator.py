@@ -207,6 +207,17 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     story.append(Paragraph(_escapar_texto(analise.titulo_traduzido), style_titulo_trad))
     story.append(Paragraph(f"<b>Título Original:</b> <i>{_escapar_texto(analise.titulo_original)}</i>", style_titulo_orig))
 
+    meta_itens = []
+    if getattr(analise, "area_conhecimento", None):
+        meta_itens.append(f"<b>Área do Conhecimento:</b> {_escapar_texto(analise.area_conhecimento)}")
+    if getattr(analise, "palavras_chave", None):
+        tags_str = ", ".join(analise.palavras_chave)
+        meta_itens.append(f"<b>Palavras-chave:</b> {_escapar_texto(tags_str)}")
+    if meta_itens:
+        meta_str = " &nbsp;&bull;&nbsp; ".join(meta_itens)
+        story.append(Paragraph(meta_str, style_corpo))
+        story.append(Spacer(1, 4))
+
     # Box de Destaque para o Resumo Curto (TL;DR)
     tldr_content = [
         Paragraph("⚡ SÍNTESE EXECUTIVA (RESUMO CURTO)", style_tldr_title),

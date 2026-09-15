@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field
 
 
@@ -99,6 +99,12 @@ class IdentificacaoEReferencias(BaseModel):
     )
     referencias: ReferenciasNormatizadas = Field(
         description="Referências bibliográficas formatadas rigorosamente nas normas selecionadas pelo usuário (campos não selecionados devem retornar None)."
+    )
+    area_conhecimento: str = Field(
+        description="Grande área e subárea do conhecimento científico a que o artigo pertence (ex.: 'Ciência da Computação / Inteligência Artificial', 'Medicina / Radiologia', 'Engenharia Mecânica / Termodinâmica')."
+    )
+    palavras_chave: List[str] = Field(
+        description="Lista com 3 a 5 palavras-chave conceituais em Português que melhor caracterizam o estudo."
     )
 
 
@@ -202,3 +208,5 @@ class AnaliseArtigo(BaseModel):
     resumo_completo: str
     perguntas_fundamentais: PerguntasFundamentais
     referencias: ReferenciasNormatizadas
+    area_conhecimento: str
+    palavras_chave: List[str]

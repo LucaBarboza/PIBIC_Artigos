@@ -3,6 +3,7 @@ import streamlit as st
 from src.gemini_analyzer import analisar_artigo_profundo, obter_api_key
 from src.schemas import AnaliseArtigo
 from src.pdf_generator import gerar_relatorio_pdf, sanitizar_nome_arquivo
+from src.chat_module import responder_pergunta_artigo
 
 # Configuração da página
 st.set_page_config(
@@ -447,6 +448,8 @@ if analisar_clicado:
             st.session_state["resultado_analise"] = resultado
             st.session_state["nome_artigo_analisado"] = uploaded_file.name
             st.session_state["normas_processadas"] = normas_selecionadas
+            st.session_state["pdf_bytes_atual"] = pdf_bytes
+            st.session_state["chat_historico"] = []
             st.success("✨ Análise científica aprofundada concluída com sucesso!")
 
         except ValueError as ve:
@@ -465,7 +468,59 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     res: AnaliseArtigo = st.session_state["resultado_analise"]
     nome_doc = st.session_state.get("nome_artigo_analisado", "artigo.pdf")
 
-    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+    # Recuperação ou salvaguarda de pdf_bytes_atual para o chat
+    if "pdf_bytes_atual" not in st.session_state and uploaded_file is not None:
+        st.session_state["pdf_bytes_atual"] = uploaded_file.getvalue()
+
+    # Cálculo estimado de tempo de leitura economizado
+    palavras_artigo_est = max(4000, len(res.resumo_completo.split()) * 12)
+    tempo_minutos = max(20, round(palavras_artigo_est / 180))
+
+    # Tags de palavras-chave formatadas como badges modernos
+    pills_html = ""
+    if getattr(res, "palavras_chave", None):
+        pills_html = " ".join([
+            f'<span style="display: inline-block; background: #EEF2F6; border: 1px solid #CBD5E1; color: #1E293B; font-size: 0.8rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 9999px; margin-right: 0.35rem; margin-bottom: 0.35rem;">#{tag}</span>'
+            for tag in res.palavras_chave
+        ])
+    else:
+        pills_html = '<span style="color: #94A3B8; font-size: 0.85rem;">Não identificadas</span>'
+
+    area_texto = getattr(res, "area_conhecimento", "Geral / Multidisciplinar")
+
+    # PAINEL DE METADADOS CIENTÍFICOS
+    with st.container(border=True):
+        st.markdown(
+            f"""
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: flex-start;">
+                <div style="flex: 1; min-width: 220px;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
+                        ⏱️ Tempo de Leitura Economizado
+                    </div>
+                    <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin-top: 0.2rem;">
+                        ~{tempo_minutos} min <span style="font-size: 0.82rem; font-weight: 500; color: #10B981;">(leitura crítica + fichamento)</span>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 220px;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
+                        🏷️ Grande Área / Subárea
+                    </div>
+                    <div style="font-size: 1.05rem; font-weight: 700; color: #2563EB; margin-top: 0.2rem;">
+                        {area_texto}
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #F1F5F9;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.45rem;">
+                    🔑 Palavras-chave do Artigo
+                </div>
+                <div>{pills_html}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown("<div style='margin-top: 1.2rem;'></div>", unsafe_allow_html=True)
 
     # Geração do relatório em PDF em memória
     pdf_bytes = gerar_relatorio_pdf(res, nome_doc)
@@ -634,6 +689,89 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
 
         if not alguma_norma_exibida:
             st.info("Nenhuma referência selecionada para exibição.")
+
+    # 5. PERGUNTE AO ARTIGO (CHAT COM LONG CONTEXT & STRICT GROUNDING)
+    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
+                Pergunte ao Artigo
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin: 0 0 0.4rem 0;">
+                💬 Chat com Texto Integral (Strict Grounding)
+            </h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1.2rem; line-height: 1.5;">
+                Tire dúvidas pontuais sobre metodologia, estatísticas, limitações ou resultados diretamente com o PDF integral.
+                As respostas utilizam <b>Google Gemini Long Context</b> com <b>grounding estrito</b> (apenas evidências do documento com indicação de seção/página, sem alucinação).
+            </p>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        if "chat_historico" not in st.session_state:
+            st.session_state["chat_historico"] = []
+
+        # Botões de perguntas rápidas sugeridas
+        st.markdown(
+            "<div style='font-size: 0.82rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;'>💡 Sugestões de perguntas rápidas:</div>",
+            unsafe_allow_html=True,
+        )
+        col_sug1, col_sug2, col_sug3 = st.columns(3)
+        pergunta_sugerida = None
+        with col_sug1:
+            if st.button("⚠️ Quais as limitações?", key="btn_sug_limitacoes", use_container_width=True):
+                pergunta_sugerida = "Quais são as principais limitações, ameaças à validade ou ressalvas apontadas expressamente pelos autores no artigo?"
+        with col_sug2:
+            if st.button("🔬 Metodologia e amostra?", key="btn_sug_metodo", use_container_width=True):
+                pergunta_sugerida = "Como foi composta a metodologia da pesquisa, qual o tamanho e perfil da amostra e quais instrumentos de coleta foram adotados?"
+        with col_sug3:
+            if st.button("📊 Principais métricas?", key="btn_sug_resultados", use_container_width=True):
+                pergunta_sugerida = "Quais foram os principais dados quantitativos, métricas estatísticas e resultados numéricos reportados no artigo?"
+
+        # Área de histórico de mensagens
+        for msg in st.session_state["chat_historico"]:
+            avatar = "🧑‍🔬" if msg["role"] == "user" else "🤖"
+            with st.chat_message(msg["role"], avatar=avatar):
+                st.markdown(msg["content"])
+
+        # Input de chat
+        pergunta_digitada = st.chat_input("Faça uma pergunta sobre o artigo (ex: Quais técnicas estatísticas foram usadas?)...")
+        pergunta_final = pergunta_sugerida or pergunta_digitada
+
+        if pergunta_final:
+            st.session_state["chat_historico"].append({"role": "user", "content": pergunta_final})
+            with st.chat_message("user", avatar="🧑‍🔬"):
+                st.markdown(pergunta_final)
+
+            with st.chat_message("assistant", avatar="🤖"):
+                with st.spinner("Consultando o texto integral do artigo via Gemini..."):
+                    try:
+                        pdf_bytes_chat = st.session_state.get("pdf_bytes_atual")
+                        if not pdf_bytes_chat and uploaded_file is not None:
+                            pdf_bytes_chat = uploaded_file.getvalue()
+
+                        if not pdf_bytes_chat:
+                            resposta = "⚠️ Arquivo do artigo não encontrado na memória. Por favor, reenvie o PDF para habilitar o chat."
+                        else:
+                            resposta = responder_pergunta_artigo(
+                                pdf_bytes=pdf_bytes_chat,
+                                pergunta=pergunta_final,
+                                historico_chat=st.session_state["chat_historico"][:-1],
+                                nome_arquivo=nome_doc,
+                            )
+                    except Exception as chat_err:
+                        resposta = f"❌ Ocorreu um erro ao consultar o artigo: {chat_err}"
+
+                    st.markdown(resposta)
+                    st.session_state["chat_historico"].append({"role": "assistant", "content": resposta})
+
+        # Botão de limpar histórico se houver mensagens
+        if st.session_state["chat_historico"]:
+            st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+            if st.button("🗑️ Limpar conversa", key="btn_limpar_chat"):
+                st.session_state["chat_historico"] = []
+                st.rerun()
 
     st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
     st.download_button(
