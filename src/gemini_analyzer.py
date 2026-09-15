@@ -5,7 +5,7 @@ from google import genai
 from google.genai import types
 
 from src.schemas import (
-    IdentificacaoEReferencias,
+    IdentificacaoEMetadados,
     SintesesDoArtigo,
     PerguntasFundamentais,
     AnaliseArtigo,
@@ -75,7 +75,6 @@ def _chamar_gemini_com_fallback(
 
 def analisar_artigo_profundo(
     pdf_bytes: bytes,
-    normas_selecionadas: List[str],
     nome_arquivo: str = "artigo.pdf",
     progresso_callback: Optional[Callable[[float, str], None]] = None,
     modelo_preferido: str = "gemini-3.5-flash-lite",
@@ -89,17 +88,16 @@ def analisar_artigo_profundo(
     pdf_part = types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf")
 
     # -------------------------------------------------------------
-    # ETAPA 1: Identificação Bibliográfica e Referências Normatizadas
+    # ETAPA 1: Identificação Bibliográfica e Metadados
     # -------------------------------------------------------------
     if progresso_callback:
         progresso_callback(
             0.15,
-            "🔍 Etapa 1/3: Extraindo identificação, autores e formatando referências normatizadas..."
+            "🔍 Etapa 1/3: Extraindo identificação bibliográfica, autores e metadados..."
         )
 
-    normas_txt = ", ".join(normas_selecionadas) if normas_selecionadas else "Nenhuma"
     prompt_etapa1 = f"""
-Você é um bibliotecário e especialista em catalogação e normalização acadêmica internacional.
+Você é um especialista em catalogação acadêmica e análise de publicações científicas.
 Analise as primeiras páginas, cabeçalhos, rodapés e metadados do artigo em PDF ('{nome_arquivo}').
 
 TAREFAS OBRIGATÓRIAS:
@@ -107,25 +105,24 @@ TAREFAS OBRIGATÓRIAS:
 2. 'titulo_traduzido': Tradução técnica primorosa do título para o Português brasileiro culto.
    REGRA OBRIGATÓRIA: Se o título original do artigo JÁ estiver em Português, NÃO traduza e defina 'titulo_traduzido' estritamente como null.
 3. Extraia o Resumo (Abstract) original na íntegra.
-4. NORMAS SOLICITADAS: [{normas_txt}].
-   - Gere com exatidão milimétrica a referência bibliográfica completa do próprio artigo para CADA uma das normas listadas acima.
-   - Respeite rigorosamente todas as regras de autoria (caixa alta, iniciais), títulos em itálico/negrito, periódico, volume, número, páginas, mês/ano e DOI.
-   - IMPORTANTE: Retorne ESTRITAMENTE a referência formatada pronta para citação. NÃO adicione comentários, explicações, observações nem frases como 'Onde impera' ou similar.
-   - Para qualquer norma NÃO selecionada, defina o campo estritamente como null.
-5. Identifique a Grande Área e Subárea do Conhecimento Científico a que o estudo pertence.
-6. Extraia de 3 a 5 Palavras-Chave conceituais essenciais em Português que melhor caracterizam o estudo.
+4. Identifique a Grande Área e Subárea do Conhecimento Científico a que o estudo pertence.
+5. Extraia de 3 a 5 Palavras-Chave conceituais essenciais em Português que melhor caracterizam o estudo.
+6. Identifique a 'densidade_tecnica' do artigo: responda estritamente com 'baixa', 'media' ou 'alta'.
+   - 'baixa': ensaios, artigos de revisão narrativa ou ciências humanas com leitura fluida e discursiva.
+   - 'media': estudos empíricos e experimentais convencionais com dados e gráficos padrão.
+   - 'alta': pesada em equações matemáticas, modelos estatísticos avançados, algoritmos complexos ou física/química teórica.
 """
 
     sys_etapa1 = (
-        "Você é um bibliotecário-chefe de universidade federal com máxima precisão em "
-        "metadados bibliográficos e normas ABNT NBR 6023, APA 7, Vancouver, IEEE, Chicago e MLA."
+        "Você é um catalogador acadêmico sênior com máxima precisão em "
+        "metadados bibliográficos, identificação de autoria, periódicos e áreas do conhecimento científico."
     )
 
-    dados_etapa1: IdentificacaoEReferencias = _chamar_gemini_com_fallback(
+    dados_etapa1: IdentificacaoEMetadados = _chamar_gemini_com_fallback(
         client=client,
         pdf_part=pdf_part,
         prompt=prompt_etapa1,
-        schema=IdentificacaoEReferencias,
+        schema=IdentificacaoEMetadados,
         system_instruction=sys_etapa1,
         modelo_preferido=modelo_preferido,
     )
@@ -219,7 +216,7 @@ PERGUNTAS A RESPONDER:
         resumo_traduzido=dados_etapa2.resumo_traduzido,
         resumo_completo=dados_etapa2.resumo_completo,
         perguntas_fundamentais=dados_etapa3,
-        referencias=dados_etapa1.referencias,
         area_conhecimento=dados_etapa1.area_conhecimento,
         palavras_chave=dados_etapa1.palavras_chave,
+        densidade_tecnica=getattr(dados_etapa1, "densidade_tecnica", "media") or "media",
     )

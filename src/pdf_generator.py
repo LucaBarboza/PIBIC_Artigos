@@ -191,15 +191,6 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
         textColor=colors.HexColor("#334155"),
     )
 
-    style_referencia_code = ParagraphStyle(
-        "RefCode",
-        parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=8.5,
-        leading=12.5,
-        textColor=colors.HexColor("#1E293B"),
-    )
-
     story = []
 
     # ---------------- 1. CABEÇALHO & TÍTULOS ----------------
@@ -283,43 +274,6 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
             ])
         )
         story.append(KeepTogether([card_table, Spacer(1, 8)]))
-
-    story.append(Spacer(1, 10))
-
-    # ---------------- 4. REFERÊNCIA ----------------
-    story.append(Paragraph("Referência", style_secao))
-    story.append(HRFlowable(width="100%", thickness=0.8, color=colors.HexColor("#E2E8F0"), spaceAfter=10))
-
-    refs = analise.referencias
-    normas_dict = {
-        "ABNT": refs.abnt,
-        "APA": refs.apa,
-        "Vancouver": refs.vancouver,
-        "IEEE": refs.ieee,
-        "Chicago": refs.chicago,
-        "MLA": refs.mla,
-    }
-
-    alguma_ref = False
-    for nome_norma, valor in normas_dict.items():
-        if valor:
-            alguma_ref = True
-            ref_content = [
-                Paragraph(f"<b>{nome_norma}</b>", style_subsecao),
-                Paragraph(_escapar_texto(valor), style_referencia_code),
-            ]
-            ref_table = Table([[ref_content]], colWidths=[504])
-            ref_table.setStyle(
-                TableStyle([
-                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F1F5F9")),
-                    ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#CBD5E1")),
-                    ("PADDING", (0, 0), (-1, -1), 8),
-                ])
-            )
-            story.append(KeepTogether([ref_table, Spacer(1, 6)]))
-
-    if not alguma_ref:
-        story.append(Paragraph("<i>Nenhuma norma selecionada.</i>", style_corpo))
 
     # Construção do documento com o Canvas customizado
     doc.build(story, canvasmaker=NumberedCanvas)

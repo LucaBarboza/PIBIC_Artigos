@@ -4,6 +4,7 @@ from src.gemini_analyzer import analisar_artigo_profundo, obter_api_key
 from src.schemas import AnaliseArtigo
 from src.pdf_generator import gerar_relatorio_pdf, sanitizar_nome_arquivo
 from src.chat_module import responder_pergunta_artigo
+from src.metrics import estimar_tempo_leitura
 
 # Configuração da página
 st.set_page_config(
@@ -303,32 +304,6 @@ div[data-testid="stDownloadButton"] > button:hover {
     margin: 0;
 }
 
-.norma-container {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 1.1rem;
-    margin-bottom: 1.2rem;
-}
-
-.norma-badge {
-    display: inline-block;
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    background: #DBEAFE;
-    color: #1E40AF;
-    font-weight: 700;
-    font-size: 0.8rem;
-    margin-bottom: 0.4rem;
-}
-
-.norma-scope {
-    font-size: 0.82rem;
-    color: #64748B;
-    line-height: 1.4;
-    margin-bottom: 0.6rem;
-}
-
 /* =========================================================================
    WIDGET FLUTUANTE DE CHAT (FAB + POPUP PIXEL-PERFECT)
    ========================================================================= */
@@ -597,7 +572,7 @@ st.markdown(
     <p class="hero-subtitle">
         Acelere sua revisão bibliográfica e fichamento acadêmico. Faça upload do PDF de qualquer artigo 
         e receba uma <b>análise estruturada e profunda via Google Gemini 3.5 Flash-Lite</b>: síntese em múltiplos níveis, 
-        avaliação metodológica, respostas às perguntas fundamentais e referências normatizadas.
+        avaliação metodológica e respostas às perguntas fundamentais.
     </p>
     """,
     unsafe_allow_html=True,
@@ -618,18 +593,13 @@ st.markdown(
             </div>
             <div class="tutorial-step">
                 <div class="step-num">2</div>
-                <div class="step-title">Selecione Normas</div>
-                <div class="step-desc">Escolha quais normas bibliográficas deseja gerar (ABNT, APA, IEEE, etc.).</div>
-            </div>
-            <div class="tutorial-step">
-                <div class="step-num">3</div>
                 <div class="step-title">Inicie a Análise</div>
                 <div class="step-desc">O Gemini 3.5 Flash-Lite realiza a leitura multimodal e o fichamento estruturado.</div>
             </div>
             <div class="tutorial-step">
-                <div class="step-num">4</div>
-                <div class="step-title">Copie & Estude</div>
-                <div class="step-desc">Consulte os resumos, perguntas metodológicas e copie as referências em 1 clique.</div>
+                <div class="step-num">3</div>
+                <div class="step-title">Explore & Estude</div>
+                <div class="step-desc">Consulte os resumos estruturados, perguntas metodológicas e tire dúvidas no chat interativo.</div>
             </div>
         </div>
     </div>
@@ -663,35 +633,7 @@ with st.container(border=True):
         )
 
     st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-label"><span>📚</span> 2. Normas Bibliográficas Desejadas</div>', unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        cb_abnt = st.checkbox("ABNT", value=True)
-        cb_apa = st.checkbox("APA", value=False)
-    with col2:
-        cb_vancouver = st.checkbox("Vancouver", value=False)
-        cb_ieee = st.checkbox("IEEE", value=False)
-    with col3:
-        cb_chicago = st.checkbox("Chicago", value=False)
-        cb_mla = st.checkbox("MLA", value=False)
-
-    normas_selecionadas = []
-    if cb_abnt:
-        normas_selecionadas.append("ABNT")
-    if cb_apa:
-        normas_selecionadas.append("APA")
-    if cb_vancouver:
-        normas_selecionadas.append("Vancouver")
-    if cb_ieee:
-        normas_selecionadas.append("IEEE")
-    if cb_chicago:
-        normas_selecionadas.append("Chicago")
-    if cb_mla:
-        normas_selecionadas.append("MLA")
-
-    st.markdown('<div style="margin-top: 1.2rem;"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="section-label"><span>⚡</span> 3. Processamento da IA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label"><span>⚡</span> 2. Processamento da IA</div>', unsafe_allow_html=True)
 
     analisar_clicado = st.button("🚀 Fazer Análise do Artigo", key="btn_analisar_principal", use_container_width=True)
 
@@ -714,7 +656,6 @@ if analisar_clicado:
             pdf_bytes = uploaded_file.getvalue()
             resultado = analisar_artigo_profundo(
                 pdf_bytes=pdf_bytes,
-                normas_selecionadas=normas_selecionadas,
                 nome_arquivo=uploaded_file.name,
                 progresso_callback=atualizar_progresso,
             )
@@ -725,7 +666,6 @@ if analisar_clicado:
             # Salvar no session_state para manter persistente
             st.session_state["resultado_analise"] = resultado
             st.session_state["nome_artigo_analisado"] = uploaded_file.name
-            st.session_state["normas_processadas"] = normas_selecionadas
             st.session_state["pdf_bytes_atual"] = pdf_bytes
             st.session_state["chat_historico"] = []
             st.success("✨ Análise científica aprofundada concluída com sucesso!")
@@ -750,9 +690,27 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     if "pdf_bytes_atual" not in st.session_state and uploaded_file is not None:
         st.session_state["pdf_bytes_atual"] = uploaded_file.getvalue()
 
-    # Cálculo estimado de tempo de leitura economizado
-    palavras_artigo_est = max(4000, len(res.resumo_completo.split()) * 12)
-    tempo_minutos = max(20, round(palavras_artigo_est / 180))
+    # Recuperação do arquivo para cálculo preciso de métricas
+    pdf_bytes_artigo = st.session_state.get("pdf_bytes_atual")
+    densidade_artigo = getattr(res, "densidade_tecnica", "media") or "media"
+    metricas = estimar_tempo_leitura(pdf_bytes_artigo, densidade=densidade_artigo)
+    tempo_minutos = metricas["tempo_minutos"]
+    total_palavras_fmt = f"{metricas['total_palavras']:,}".replace(",", ".")
+    num_pags = metricas["num_paginas"]
+    ppm_val = metricas["ppm"]
+    dens_val = metricas["densidade"].capitalize()
+
+    if metricas["eh_escaneado"]:
+        detalhe_metricas = (
+            f"Base: ~{num_pags} págs escaneadas (~{total_palavras_fmt} palavras est.) • "
+            f"<b>{ppm_val} PPM</b> (Densidade {dens_val}) + fichamento"
+        )
+    else:
+        pags_texto = f" • {num_pags} págs" if num_pags > 0 else ""
+        detalhe_metricas = (
+            f"Base: {total_palavras_fmt} palavras{pags_texto} • "
+            f"<b>{ppm_val} PPM</b> (Densidade {dens_val}) + fichamento"
+        )
 
     # Tags de palavras-chave formatadas como badges modernos
     pills_html = ""
@@ -771,12 +729,15 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
         st.markdown(
             f"""
             <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: flex-start;">
-                <div style="flex: 1; min-width: 220px;">
+                <div style="flex: 1.2; min-width: 270px;">
                     <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
                         ⏱️ Tempo de Leitura Economizado
                     </div>
                     <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin-top: 0.2rem;">
                         ~{tempo_minutos} min <span style="font-size: 0.82rem; font-weight: 500; color: #10B981;">(leitura crítica + fichamento)</span>
+                    </div>
+                    <div style="font-size: 0.78rem; color: #64748B; margin-top: 0.35rem; line-height: 1.35;">
+                        💡 {detalhe_metricas}
                     </div>
                 </div>
                 <div style="flex: 1; min-width: 220px;">
@@ -971,49 +932,6 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
             )
 
         st.markdown("<div style='margin-bottom: 0.8rem;'></div>", unsafe_allow_html=True)
-
-    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-
-    # 4. REFERÊNCIA
-    with st.container(border=True):
-        st.markdown(
-            """
-            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.8rem;">
-                Referência
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        refs = res.referencias
-
-        normas_info = {
-            "ABNT": refs.abnt,
-            "APA": refs.apa,
-            "Vancouver": refs.vancouver,
-            "IEEE": refs.ieee,
-            "Chicago": refs.chicago,
-            "MLA": refs.mla,
-        }
-
-        alguma_norma_exibida = False
-        for nome_norma, valor in normas_info.items():
-            if valor:
-                alguma_norma_exibida = True
-                st.markdown(
-                    f"""
-                    <div style="margin-top: 1rem; margin-bottom: 0.4rem;">
-                        <span style="background: #DBEAFE; color: #1E40AF; font-weight: 700; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 6px;">
-                            {nome_norma}
-                        </span>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-                st.code(valor, language="markdown")
-
-        if not alguma_norma_exibida:
-            st.info("Nenhuma referência selecionada para exibição.")
 
     st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
     st.download_button(
