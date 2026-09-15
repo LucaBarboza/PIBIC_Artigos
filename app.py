@@ -2,6 +2,7 @@ import os
 import streamlit as st
 from src.gemini_analyzer import analisar_artigo_profundo, obter_api_key
 from src.schemas import AnaliseArtigo
+from src.pdf_generator import gerar_relatorio_pdf, sanitizar_nome_arquivo
 
 # Configuração da página
 st.set_page_config(
@@ -462,9 +463,24 @@ if analisar_clicado:
 # ----------------- EXIBIÇÃO COM OS NOMES EXATOS -----------------
 if "resultado_analise" in st.session_state and st.session_state["resultado_analise"] is not None:
     res: AnaliseArtigo = st.session_state["resultado_analise"]
-    nome_doc = st.session_state.get("nome_artigo_analisado", "Artigo")
+    nome_doc = st.session_state.get("nome_artigo_analisado", "artigo.pdf")
 
     st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+
+    # Geração do relatório em PDF em memória
+    pdf_bytes = gerar_relatorio_pdf(res, nome_doc)
+    nome_arquivo_pdf = sanitizar_nome_arquivo(nome_doc)
+
+    st.download_button(
+        label="📥 Baixar Relatório Completo em PDF",
+        data=pdf_bytes,
+        file_name=nome_arquivo_pdf,
+        mime="application/pdf",
+        use_container_width=True,
+        help="Baixe o relatório diagramado com o fichamento analítico completo e referências.",
+    )
+
+    st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
 
     # 1. TÍTULO TRADUZIDO
     with st.container(border=True):
@@ -618,3 +634,13 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
 
         if not alguma_norma_exibida:
             st.info("Nenhuma referência selecionada para exibição.")
+
+    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+    st.download_button(
+        label="📥 Baixar Relatório Completo em PDF",
+        data=pdf_bytes,
+        file_name=nome_arquivo_pdf,
+        mime="application/pdf",
+        use_container_width=True,
+        key="btn_download_fim",
+    )
