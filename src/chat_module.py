@@ -64,7 +64,7 @@ def responder_pergunta_artigo(
         system_instruction=SYSTEM_INSTRUCTION_CHAT,
     )
 
-    modelos = [modelo_preferido, "gemini-2.5-flash"]
+    modelos = [modelo_preferido, "gemini-3.1-flash-lite"]
     ultimo_erro = None
 
     for modelo in modelos:

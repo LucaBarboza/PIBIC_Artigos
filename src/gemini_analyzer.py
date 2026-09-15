@@ -54,7 +54,7 @@ def _chamar_gemini_com_fallback(
         system_instruction=system_instruction,
     )
 
-    modelos = [modelo_preferido, "gemini-2.5-flash"]
+    modelos = [modelo_preferido, "gemini-3.1-flash-lite"]
     ultimo_erro = None
 
     for modelo in modelos:
