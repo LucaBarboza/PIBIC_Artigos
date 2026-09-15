@@ -333,11 +333,11 @@ div[data-testid="stDownloadButton"] > button:hover {
    WIDGET FLUTUANTE DE CHAT (FAB + POPUP PIXEL-PERFECT)
    ========================================================================= */
 
-/* 1. Botão Flutuante Circular (FAB) */
+/* 1. Botão Flutuante Circular (FAB) - Mais para a esquerda, próximo ao corpo do app */
 div[class*="st-key-floating_chat_fab"] {
     position: fixed !important;
-    bottom: 24px !important;
-    right: 24px !important;
+    bottom: 28px !important;
+    right: max(24px, calc(50vw - 440px + 14px)) !important;
     z-index: 999999 !important;
     width: 58px !important;
     height: 58px !important;
@@ -347,7 +347,7 @@ div[class*="st-key-floating_chat_fab"] {
     border: none !important;
 }
 
-div[class*="st-key-floating_chat_fab"] > button {
+div[class*="st-key-floating_chat_fab"] button {
     width: 58px !important;
     height: 58px !important;
     min-width: 58px !important;
@@ -357,7 +357,6 @@ div[class*="st-key-floating_chat_fab"] > button {
     border-radius: 50% !important;
     background: linear-gradient(135deg, #1E40AF 0%, #2563EB 100%) !important;
     color: #FFFFFF !important;
-    font-size: 1.45rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -369,27 +368,27 @@ div[class*="st-key-floating_chat_fab"] > button {
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
 }
 
-div[class*="st-key-floating_chat_fab"] > button:hover {
+div[class*="st-key-floating_chat_fab"] button:hover {
     transform: scale(1.08) !important;
     box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6) !important;
 }
 
-div[class*="st-key-floating_chat_fab"] > button:active {
+div[class*="st-key-floating_chat_fab"] button:active {
     transform: scale(0.95) !important;
 }
 
-div[class*="st-key-floating_chat_fab"] > button p {
+div[class*="st-key-floating_chat_fab"] button span[data-testid="stIconMaterial"] {
+    font-size: 1.65rem !important;
     color: #FFFFFF !important;
-    font-size: 1.45rem !important;
     line-height: 1 !important;
     margin: 0 !important;
 }
 
-/* 2. Janela Flutuante do Chat (Card Pop-up) */
+/* 2. Janela Flutuante do Chat (Card Pop-up) - Alinhada com o botão e o corpo */
 div[class*="st-key-floating_chat_card"] {
     position: fixed !important;
-    bottom: 94px !important;
-    right: 24px !important;
+    bottom: 96px !important;
+    right: max(24px, calc(50vw - 440px + 14px)) !important;
     width: 385px !important;
     max-width: calc(100vw - 48px) !important;
     background: #FFFFFF !important;
@@ -420,54 +419,56 @@ div[class*="st-key-floating_chat_card"] [data-testid="stVerticalBlockBorderWrapp
     background: transparent !important;
 }
 
-/* 3. Botões do Cabeçalho do Chat (Reset 🔄 e Fechar ✕) */
-div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] {
+/* 3. Botões do Cabeçalho do Chat (Reset e Fechar - Foto 2 Aprimorada) */
+div[class*="st-key-chat_header_btn_"] {
     display: flex !important;
-    justify-content: flex-end !important;
+    justify-content: center !important;
     align-items: center !important;
 }
 
-div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button {
-    background: #F8FAFC !important;
-    background-color: #F8FAFC !important;
+div[class*="st-key-chat_header_btn_"] button {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
     border-radius: 8px !important;
     color: #475569 !important;
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
-    max-width: 30px !important;
-    max-height: 30px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    max-width: 32px !important;
+    max-height: 32px !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 0.85rem !important;
-    line-height: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: none !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
     transition: all 0.15s ease !important;
 }
 
-div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button:hover {
+div[class*="st-key-chat_header_btn_"] button:hover {
     background: #F1F5F9 !important;
     background-color: #F1F5F9 !important;
     color: #0F172A !important;
     border-color: #CBD5E1 !important;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08) !important;
     transform: none !important;
 }
 
-div[class*="st-key-floating_chat_card"] div[class*="st-key-chat_header_btn"] > button p {
-    color: inherit !important;
-    font-size: inherit !important;
-    margin: 0 !important;
-    padding: 0 !important;
+div[class*="st-key-chat_header_btn_"] button span[data-testid="stIconMaterial"] {
+    font-size: 1.15rem !important;
+    color: #475569 !important;
     line-height: 1 !important;
+    margin: 0 !important;
+}
+
+div[class*="st-key-chat_header_btn_"] button:hover span[data-testid="stIconMaterial"] {
+    color: #0F172A !important;
 }
 
 /* 4. Pílulas de Sugestão de Perguntas (Chips Delicados) */
-div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button {
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] button {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     border: 1px solid #CBD5E1 !important;
@@ -487,7 +488,7 @@ div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button {
     justify-content: flex-start !important;
 }
 
-div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button:hover {
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] button:hover {
     background: #EFF6FF !important;
     background-color: #EFF6FF !important;
     border-color: #3B82F6 !important;
@@ -496,7 +497,7 @@ div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button:hove
     box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12) !important;
 }
 
-div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] > button p {
+div[class*="st-key-floating_chat_card"] div[class*="st-key-pill_"] button p {
     color: inherit !important;
     font-size: inherit !important;
     font-weight: inherit !important;
@@ -539,7 +540,7 @@ div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] {
     height: 40px !important;
 }
 
-div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button {
+div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] button {
     background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
     color: #FFFFFF !important;
     border-radius: 12px !important;
@@ -550,7 +551,6 @@ div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > but
     max-width: 40px !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 1.15rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -559,15 +559,15 @@ div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > but
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button:hover {
+div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] button:hover {
     background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%) !important;
     transform: scale(1.05) !important;
     box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45) !important;
 }
 
-div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] > button p {
+div[class*="st-key-floating_chat_card"] [data-testid="stFormSubmitButton"] button span[data-testid="stIconMaterial"] {
     color: #FFFFFF !important;
-    font-size: 1.15rem !important;
+    font-size: 1.25rem !important;
     margin: 0 !important;
     line-height: 1 !important;
 }
@@ -970,10 +970,10 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     is_chat_aberto = st.session_state.get("chat_widget_aberto", False)
 
     # 1. Botão Flutuante Circular (FAB)
-    fab_label = "✕" if is_chat_aberto else "💬"
+    fab_icon = ":material/close:" if is_chat_aberto else ":material/chat:"
     fab_help = "Fechar chat" if is_chat_aberto else "Pergunte ao Artigo (Chat)"
 
-    if st.button(fab_label, key="floating_chat_fab", help=fab_help):
+    if st.button("", icon=fab_icon, key="floating_chat_fab", help=fab_help):
         st.session_state["chat_widget_aberto"] = not is_chat_aberto
         st.rerun()
 
@@ -981,7 +981,7 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     if is_chat_aberto:
         with st.container(key="floating_chat_card"):
             # Cabeçalho do Card Pop-up
-            col_tit, col_act1, col_act2 = st.columns([7, 1.1, 1.1], vertical_alignment="center")
+            col_tit, col_act1, col_act2 = st.columns([7.4, 0.9, 0.9], vertical_alignment="center")
             with col_tit:
                 st.markdown(
                     """
@@ -995,11 +995,11 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
                     unsafe_allow_html=True,
                 )
             with col_act1:
-                if st.button("↻", key="chat_header_btn_clear", help="Reiniciar conversa"):
+                if st.button("", icon=":material/refresh:", key="chat_header_btn_clear", help="Reiniciar conversa"):
                     st.session_state["chat_historico"] = []
                     st.rerun()
             with col_act2:
-                if st.button("✕", key="chat_header_btn_close", help="Fechar chat"):
+                if st.button("", icon=":material/close:", key="chat_header_btn_close", help="Fechar chat"):
                     st.session_state["chat_widget_aberto"] = False
                     st.rerun()
 
@@ -1044,7 +1044,7 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
                         label_visibility="collapsed",
                     )
                 with col_send:
-                    btn_enviar = st.form_submit_button("➔")
+                    btn_enviar = st.form_submit_button("", icon=":material/arrow_forward:")
 
             pergunta_final = pergunta_clicada or (pergunta_texto if btn_enviar and pergunta_texto.strip() else None)
 
