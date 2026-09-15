@@ -140,14 +140,15 @@ hr {
     line-height: 1.4;
 }
 
-/* Estilo do container de controle */
+/* Estilo do container de controle e cards */
 [data-testid="stVerticalBlockBorderWrapper"] {
     background: #FFFFFF;
     border-radius: 18px !important;
     border: 1px solid #E2E8F0 !important;
     box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
-    padding: 1.2rem !important;
-    margin-bottom: 1.5rem;
+    padding: 1.8rem 1.8rem 2.2rem 1.8rem !important;
+    margin-bottom: 2.2rem !important;
+    overflow: visible !important;
 }
 
 .section-label {
@@ -542,70 +543,40 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     with st.container(border=True):
         st.markdown(
             """
-            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+            <div style="color: #2563EB; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.2rem;">
                 Perguntas Fundamentais que o Artigo Respondeu
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        col_1, col_2 = st.columns(2)
+        perguntas_lista = [
+            ("Novidades do artigo", pf.novidades_do_artigo),
+            ("O que foi apresentado tá bem fundamentado", pf.fundamentacao),
+            ("Qualidade do artigo", pf.qualidade_artigo),
+            ("Assunto principal", pf.assunto_principal),
+            ("Foco", pf.foco),
+            ("Foco teórico", pf.foco_teorico),
+        ]
 
-        with col_1:
+        for titulo_p, texto_p in perguntas_lista:
             st.markdown(
                 f"""
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        Novidades do artigo
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem;">
+                    <div style="font-weight: 700; font-size: 0.95rem; color: #0F172A; margin-bottom: 0.5rem;">
+                        {titulo_p}
                     </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.novidades_do_artigo}</p>
-                </div>
-
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        O que foi apresentado tá bem fundamentado
+                    <div style="color: #334155; font-size: 0.92rem; line-height: 1.7;">
+                        {texto_p}
                     </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.fundamentacao}</p>
-                </div>
-
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        Qualidade do artigo
-                    </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.qualidade_artigo}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-        with col_2:
-            st.markdown(
-                f"""
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        Assunto principal
-                    </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.assunto_principal}</p>
-                </div>
+        st.markdown("<div style='margin-bottom: 0.8rem;'></div>", unsafe_allow_html=True)
 
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        Foco
-                    </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.foco}</p>
-                </div>
-
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.1rem;">
-                    <div style="font-weight: 700; font-size: 0.92rem; color: #0F172A; margin-bottom: 0.45rem;">
-                        Foco teórico
-                    </div>
-                    <p style="color: #334155; font-size: 0.88rem; line-height: 1.6; margin: 0;">{pf.foco_teorico}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-    st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
     # 4. REFERÊNCIA
     with st.container(border=True):
