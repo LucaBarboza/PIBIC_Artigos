@@ -514,6 +514,21 @@ div[class*="st-key-floating_chat_card"] [data-testid="stForm"] {
     background: transparent !important;
 }
 
+/* Ocultar 'Press Enter to submit form' que sobrepõe a digitação */
+[data-testid="InputInstructions"],
+div[class*="st-key-floating_chat_card"] [data-testid="InputInstructions"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+div[class*="st-key-floating_chat_card"] [data-testid="stTextInput"] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 div[class*="st-key-floating_chat_card"] input[type="text"] {
     border-radius: 12px !important;
     border: 1px solid #CBD5E1 !important;
