@@ -54,8 +54,8 @@ def _chamar_gemini_com_fallback(
         system_instruction=system_instruction,
     )
 
-    modelos = [modelo_preferido, "gemini-3.1-flash-lite"]
-    ultimo_erro = None
+    modelos = [modelo_preferido, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
+    erros = []
 
     for modelo in modelos:
         try:
@@ -67,10 +67,10 @@ def _chamar_gemini_com_fallback(
             if response.text:
                 return schema.model_validate_json(response.text)
         except Exception as e:
-            ultimo_erro = e
+            erros.append(f"[{modelo}]: {e}")
             continue
 
-    raise RuntimeError(f"Erro ao processar com os modelos Gemini: {ultimo_erro}")
+    raise RuntimeError(f"Erro ao processar com os modelos Gemini: {'; '.join(erros)}")
 
 
 def analisar_artigo_profundo(

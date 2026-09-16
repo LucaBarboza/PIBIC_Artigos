@@ -64,8 +64,8 @@ def responder_pergunta_artigo(
         system_instruction=SYSTEM_INSTRUCTION_CHAT,
     )
 
-    modelos = [modelo_preferido, "gemini-3.1-flash-lite"]
-    ultimo_erro = None
+    modelos = [modelo_preferido, "gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
+    erros = []
 
     for modelo in modelos:
         try:
@@ -77,7 +77,7 @@ def responder_pergunta_artigo(
             if response and response.text:
                 return response.text.strip()
         except Exception as e:
-            ultimo_erro = e
+            erros.append(f"[{modelo}]: {e}")
             continue
 
-    raise RuntimeError(f"Erro ao consultar o artigo no chat: {ultimo_erro}")
+    raise RuntimeError(f"Erro ao consultar o artigo no chat: {'; '.join(erros)}")
