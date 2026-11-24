@@ -3,11 +3,12 @@ import re
 from typing import List, Tuple
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
+    Image,
     PageTemplate,
     Paragraph,
     Spacer,
@@ -18,6 +19,13 @@ from reportlab.platypus import (
 from reportlab.pdfgen import canvas
 
 from src.schemas import AnaliseArtigo
+from src.latex_utils import (
+    formatar_texto_para_pdf,
+    latex_inline_para_xml,
+    registrar_fontes_unicode,
+    renderizar_equacao_png,
+    separar_segmentos_display,
+)
 
 
 # Paleta visual acadêmica (alinhada ao app Streamlit)
@@ -71,10 +79,19 @@ class NumberedCanvas(canvas.Canvas):
     - Rodapé com 'Página X de Y' dinâmico em todas as páginas.
     """
 
-    def __init__(self, *args, header_title: str = "", **kwargs):
+    def __init__(
+        self,
+        *args,
+        header_title: str = "",
+        font_regular: str = "Helvetica",
+        font_bold: str = "Helvetica-Bold",
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
         self._saved_page_states = []
         self._header_title = header_title
+        self._font_regular = font_regular
+        self._font_bold = font_bold
 
     def showPage(self):
         self._saved_page_states.append(dict(self.__dict__))
@@ -101,13 +118,13 @@ class NumberedCanvas(canvas.Canvas):
         else:
             # Páginas 2+: cabeçalho discreto
             y_header = page_h - 34
-            self.setFont("Helvetica", 7.5)
+            self.setFont(self._font_regular, 7.5)
             self.setFillColor(COR_MUTED)
             titulo_curto = self._header_title
             if len(titulo_curto) > 85:
                 titulo_curto = titulo_curto[:82].rstrip() + "..."
             self.drawString(MARGEM_LATERAL, y_header + 5, titulo_curto)
-            self.setFont("Helvetica-Bold", 7.5)
+            self.setFont(self._font_bold, 7.5)
             self.setFillColor(COR_AZUL_DESTAQUE)
             self.drawRightString(page_w - MARGEM_LATERAL, y_header + 5, "PIBIC AI")
             self.setStrokeColor(COR_BORDA_SUAVE)
@@ -120,7 +137,7 @@ class NumberedCanvas(canvas.Canvas):
         self.setLineWidth(0.6)
         self.line(MARGEM_LATERAL, y_line, page_w - MARGEM_LATERAL, y_line)
 
-        self.setFont("Helvetica", 8)
+        self.setFont(self._font_regular, 8)
         self.setFillColor(COR_MUTED)
         self.drawString(
             MARGEM_LATERAL,
@@ -133,18 +150,49 @@ class NumberedCanvas(canvas.Canvas):
         self.restoreState()
 
 
-def _formatar_texto_inline(texto: str) -> str:
+def _formatar_texto_inline(texto: str, font_mono: str = "DejaVuSansMono") -> str:
     """
-    Higieniza caracteres especiais para XML do ReportLab e converte
-    negrito Markdown simples (**texto**) em <b>texto</b> sem alterar o conteúdo.
+    Formata texto científico com suporte a LaTeX inline ($...$, \\(...\\)) e Markdown leve
+    para XML seguro do ReportLab.
     """
-    if not texto:
-        return ""
-    t = texto.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-    # Converte **negrito** em <b>negrito</b> de forma segura (mesma linha)
-    t = re.sub(r"\*\*([^*\n]+?)\*\*", r"<b>\1</b>", t)
-    t = t.replace("\n", "<br/>")
-    return t
+    return formatar_texto_para_pdf(texto, font_mono=font_mono)
+
+
+def _criar_flowable_equacao(
+    latex_expr: str,
+    max_width: float,
+    style_math_fallback: ParagraphStyle,
+) -> Flowable:
+    """
+    Renderiza uma equação em bloco ($$...$$ ou \\[...\\]) como imagem PNG nítida via
+    matplotlib.mathtext; caso a expressão use macros não suportados, faz fallback
+    para Paragraph centralizado em Unicode.
+    """
+    rendered = renderizar_equacao_png(latex_expr, max_width_pt=max_width)
+    if rendered is not None:
+        png_bytes, w_pt, h_pt = rendered
+        img = Image(io.BytesIO(png_bytes), width=w_pt, height=h_pt)
+        img.hAlign = "CENTER"
+        return img
+    return Paragraph(latex_inline_para_xml(latex_expr), style_math_fallback)
+
+
+def _texto_para_flowables(
+    texto: str,
+    usable_width: float,
+    style_corpo: ParagraphStyle,
+    style_math_fallback: ParagraphStyle,
+    font_mono: str,
+) -> List[Flowable]:
+    """Converte um texto (com possíveis equações em bloco e parágrafos) em Flowables."""
+    flowables: List[Flowable] = []
+    for tipo, conteudo in separar_segmentos_display(texto):
+        if tipo == "display_math":
+            flowables.append(_criar_flowable_equacao(conteudo, usable_width, style_math_fallback))
+        else:
+            for bloco in _dividir_em_blocos(conteudo):
+                flowables.append(Paragraph(_formatar_texto_inline(bloco, font_mono), style_corpo))
+    return flowables or [Paragraph("", style_corpo)]
 
 
 def _dividir_em_blocos(texto: str, max_chars: int = 1600) -> List[str]:
@@ -210,6 +258,8 @@ def _criar_bloco_callout(
     usable_width: float,
     style_titulo: ParagraphStyle,
     style_corpo: ParagraphStyle,
+    style_math_fallback: ParagraphStyle,
+    font_mono: str,
     bg_color=COR_FUNDO_TLDR,
     border_color=COR_BORDA_AZUL,
     accent_color=COR_AZUL_DESTAQUE,
@@ -218,14 +268,14 @@ def _criar_bloco_callout(
     Cria um box de destaque (ex.: Síntese Executiva ou Abstract) multi-linha
     com splitByRow=1 para nunca cortar texto em quebras de página.
     """
-    blocos = _dividir_em_blocos(texto)
-    rows: List[List[Paragraph]] = []
+    rows: List[List[Flowable]] = []
 
     if titulo:
         rows.append([Paragraph(titulo, style_titulo)])
 
-    for b in blocos:
-        rows.append([Paragraph(_formatar_texto_inline(b), style_corpo)])
+    inner_width = usable_width - 28
+    for fl in _texto_para_flowables(texto, inner_width, style_corpo, style_math_fallback, font_mono):
+        rows.append([fl])
 
     tbl = Table(rows, colWidths=[usable_width], splitByRow=1)
 
@@ -256,6 +306,8 @@ def _criar_card_pergunta(
     usable_width: float,
     style_titulo: ParagraphStyle,
     style_corpo: ParagraphStyle,
+    style_math_fallback: ParagraphStyle,
+    font_mono: str,
 ) -> Table:
     """
     Cria um card estruturado para cada Pergunta Fundamental com cabeçalho
@@ -264,13 +316,12 @@ def _criar_card_pergunta(
     header_html = (
         f'<font color="#2563EB"><b>{indice:02d}</b></font>'
         f'&nbsp;&nbsp;<font color="#CBD5E1">|</font>&nbsp;&nbsp;'
-        f'{_formatar_texto_inline(titulo)}'
+        f'{_formatar_texto_inline(titulo, font_mono)}'
     )
-    blocos = _dividir_em_blocos(texto)
-
-    rows: List[List[Paragraph]] = [[Paragraph(header_html, style_titulo)]]
-    for b in blocos:
-        rows.append([Paragraph(_formatar_texto_inline(b), style_corpo)])
+    rows: List[List[Flowable]] = [[Paragraph(header_html, style_titulo)]]
+    inner_width = usable_width - 28
+    for fl in _texto_para_flowables(texto, inner_width, style_corpo, style_math_fallback, font_mono):
+        rows.append([fl])
 
     tbl = Table(rows, colWidths=[usable_width], splitByRow=1)
 
@@ -351,12 +402,13 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     doc.addPageTemplates([PageTemplate(id="default", frames=[frame])])
 
     styles = getSampleStyleSheet()
+    font_regular, font_bold, font_italic, font_mono = registrar_fontes_unicode()
 
     # ---------------- ESTILOS TIPOGRÁFICOS ----------------
     style_tag = ParagraphStyle(
         "TagTopo",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
+        fontName=font_bold,
         fontSize=8,
         leading=10,
         textColor=COR_AZUL_DESTAQUE,
@@ -367,9 +419,9 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_titulo_trad = ParagraphStyle(
         "TituloTraduzido",
         parent=styles["Heading1"],
-        fontName="Helvetica-Bold",
-        fontSize=17,
-        leading=22,
+        fontName=font_bold,
+        fontSize=16.5,
+        leading=21.5,
         textColor=COR_NAVY,
         spaceAfter=5,
         splitLongWords=1,
@@ -378,8 +430,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_titulo_orig = ParagraphStyle(
         "TituloOriginal",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9.5,
+        fontName=font_regular,
+        fontSize=9.2,
         leading=13.5,
         textColor=COR_MUTED,
         spaceAfter=10,
@@ -389,8 +441,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_meta = ParagraphStyle(
         "MetaTexto",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=8.8,
+        fontName=font_regular,
+        fontSize=8.6,
         leading=13,
         textColor=COR_TEXTO,
         alignment=TA_LEFT,
@@ -400,8 +452,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_secao = ParagraphStyle(
         "SecaoHeader",
         parent=styles["Heading2"],
-        fontName="Helvetica-Bold",
-        fontSize=12.5,
+        fontName=font_bold,
+        fontSize=12.2,
         leading=16,
         textColor=COR_AZUL_ESCURO,
         spaceBefore=12,
@@ -413,8 +465,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_subsecao = ParagraphStyle(
         "SubSecaoHeader",
         parent=styles["Heading3"],
-        fontName="Helvetica-Bold",
-        fontSize=10.5,
+        fontName=font_bold,
+        fontSize=10.2,
         leading=14,
         textColor=COR_NAVY,
         spaceBefore=10,
@@ -426,9 +478,9 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_corpo = ParagraphStyle(
         "CorpoTexto",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9.5,
-        leading=14.5,
+        fontName=font_regular,
+        fontSize=9.2,
+        leading=14.2,
         textColor=COR_TEXTO,
         alignment=TA_JUSTIFY,
         spaceAfter=6,
@@ -440,8 +492,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_tldr_title = ParagraphStyle(
         "TLDRTitle",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
-        fontSize=8.5,
+        fontName=font_bold,
+        fontSize=8.3,
         leading=11,
         textColor=COR_AZUL_SECAO,
         splitLongWords=1,
@@ -450,9 +502,9 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_tldr_text = ParagraphStyle(
         "TLDRText",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9.5,
-        leading=14.2,
+        fontName=font_regular,
+        fontSize=9.2,
+        leading=14.0,
         textColor=COR_AZUL_ESCURO,
         alignment=TA_JUSTIFY,
         allowWidows=0,
@@ -463,9 +515,9 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_abstract_text = ParagraphStyle(
         "AbstractText",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9.2,
-        leading=14,
+        fontName=font_regular,
+        fontSize=9.0,
+        leading=13.8,
         textColor=COR_TEXTO,
         alignment=TA_JUSTIFY,
         allowWidows=0,
@@ -476,8 +528,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_pergunta_titulo = ParagraphStyle(
         "PerguntaTitulo",
         parent=styles["Normal"],
-        fontName="Helvetica-Bold",
-        fontSize=9.8,
+        fontName=font_bold,
+        fontSize=9.6,
         leading=13,
         textColor=COR_NAVY,
         splitLongWords=1,
@@ -486,13 +538,26 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
     style_pergunta_texto = ParagraphStyle(
         "PerguntaTexto",
         parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=9.3,
-        leading=14,
+        fontName=font_regular,
+        fontSize=9.0,
+        leading=13.8,
         textColor=COR_TEXTO,
         alignment=TA_JUSTIFY,
         allowWidows=0,
         allowOrphans=0,
+        splitLongWords=1,
+    )
+
+    style_math_fallback = ParagraphStyle(
+        "MathFallback",
+        parent=styles["Normal"],
+        fontName=font_italic,
+        fontSize=9.4,
+        leading=14,
+        textColor=COR_NAVY,
+        alignment=TA_CENTER,
+        spaceBefore=4,
+        spaceAfter=4,
         splitLongWords=1,
     )
 
@@ -564,6 +629,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
         usable_width=usable_width,
         style_titulo=style_tldr_title,
         style_corpo=style_tldr_text,
+        style_math_fallback=style_math_fallback,
+        font_mono=font_mono,
         bg_color=COR_FUNDO_TLDR,
         border_color=COR_BORDA_AZUL,
         accent_color=COR_AZUL_DESTAQUE,
@@ -581,6 +648,8 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
         usable_width=usable_width,
         style_titulo=style_tldr_title,
         style_corpo=style_abstract_text,
+        style_math_fallback=style_math_fallback,
+        font_mono=font_mono,
         bg_color=COR_FUNDO_SUAVE,
         border_color=COR_BORDA_SUAVE,
         accent_color=COR_BORDA,
@@ -590,13 +659,27 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
 
     if analise.resumo_traduzido:
         story.append(Paragraph("Resumo Traduzido", style_subsecao))
-        for bloco in _dividir_em_blocos(analise.resumo_traduzido):
-            story.append(Paragraph(_formatar_texto_inline(bloco), style_corpo))
+        story.extend(
+            _texto_para_flowables(
+                analise.resumo_traduzido,
+                usable_width,
+                style_corpo,
+                style_math_fallback,
+                font_mono,
+            )
+        )
         story.append(Spacer(1, 4))
 
     story.append(Paragraph("Resumo Completo", style_subsecao))
-    for bloco in _dividir_em_blocos(analise.resumo_completo):
-        story.append(Paragraph(_formatar_texto_inline(bloco), style_corpo))
+    story.extend(
+        _texto_para_flowables(
+            analise.resumo_completo,
+            usable_width,
+            style_corpo,
+            style_math_fallback,
+            font_mono,
+        )
+    )
     story.append(Spacer(1, 10))
 
     # ---------------- 3. PERGUNTAS FUNDAMENTAIS ----------------
@@ -625,16 +708,28 @@ def gerar_relatorio_pdf(analise: AnaliseArtigo, nome_arquivo_original: str = "ar
             usable_width=usable_width,
             style_titulo=style_pergunta_titulo,
             style_corpo=style_pergunta_texto,
+            style_math_fallback=style_math_fallback,
+            font_mono=font_mono,
         )
         story.append(card_table)
         story.append(Spacer(1, 9))
 
     # Construção do documento com o Canvas customizado
-    header_title = analise.titulo_traduzido or analise.titulo_original
+    raw_header_title = analise.titulo_traduzido or analise.titulo_original
+    header_title = re.sub(r"<[^>]+>", "", _formatar_texto_inline(raw_header_title, font_mono))
+    header_title = (
+        header_title.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+    )
     doc.build(
         story,
         canvasmaker=lambda *args, **kwargs: NumberedCanvas(
-            *args, header_title=header_title, **kwargs
+            *args,
+            header_title=header_title,
+            font_regular=font_regular,
+            font_bold=font_bold,
+            **kwargs,
         ),
     )
 
