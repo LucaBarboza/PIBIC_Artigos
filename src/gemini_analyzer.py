@@ -107,10 +107,6 @@ TAREFAS OBRIGATÓRIAS:
 3. Extraia o Resumo (Abstract) original na íntegra.
 4. Identifique a Grande Área e Subárea do Conhecimento Científico a que o estudo pertence.
 5. Extraia de 3 a 5 Palavras-Chave conceituais essenciais em Português que melhor caracterizam o estudo.
-6. Identifique a 'densidade_tecnica' do artigo: responda estritamente com 'baixa', 'media' ou 'alta'.
-   - 'baixa': ensaios, artigos de revisão narrativa ou ciências humanas com leitura fluida e discursiva.
-   - 'media': estudos empíricos e experimentais convencionais com dados e gráficos padrão.
-   - 'alta': pesada em equações matemáticas, modelos estatísticos avançados, algoritmos complexos ou física/química teórica.
 """
 
     sys_etapa1 = (
@@ -218,5 +214,4 @@ PERGUNTAS A RESPONDER:
         perguntas_fundamentais=dados_etapa3,
         area_conhecimento=dados_etapa1.area_conhecimento,
         palavras_chave=dados_etapa1.palavras_chave,
-        densidade_tecnica=getattr(dados_etapa1, "densidade_tecnica", "media") or "media",
     )

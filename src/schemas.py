@@ -28,15 +28,6 @@ class IdentificacaoEMetadados(BaseModel):
     palavras_chave: List[str] = Field(
         description="Lista com 3 a 5 palavras-chave conceituais em Português que melhor caracterizam o estudo."
     )
-    densidade_tecnica: str = Field(
-        default="media",
-        description=(
-            "Densidade conceitual e esforço técnico de leitura exigido pelo artigo: "
-            "'baixa' (revisão narrativa, ensaios conceituais, ciências sociais/humanas com prosa fluida), "
-            "'media' (estudo empírico/experimental padrão com gráficos e dados) ou "
-            "'alta' (pesada em formulações matemáticas, equações, modelos estatísticos avançados, física teórica ou algoritmos complexos)."
-        ),
-    )
 
 
 
@@ -144,4 +135,3 @@ class AnaliseArtigo(BaseModel):
     perguntas_fundamentais: PerguntasFundamentais
     area_conhecimento: str
     palavras_chave: List[str]
-    densidade_tecnica: str = "media"

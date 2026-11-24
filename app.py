@@ -4,7 +4,6 @@ from src.gemini_analyzer import analisar_artigo_profundo, obter_api_key
 from src.schemas import AnaliseArtigo
 from src.pdf_generator import gerar_relatorio_pdf, sanitizar_nome_arquivo
 from src.chat_module import responder_pergunta_artigo
-from src.metrics import estimar_tempo_leitura
 
 # Configuração da página
 st.set_page_config(
@@ -690,28 +689,6 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     if "pdf_bytes_atual" not in st.session_state and uploaded_file is not None:
         st.session_state["pdf_bytes_atual"] = uploaded_file.getvalue()
 
-    # Recuperação do arquivo para cálculo preciso de métricas
-    pdf_bytes_artigo = st.session_state.get("pdf_bytes_atual")
-    densidade_artigo = getattr(res, "densidade_tecnica", "media") or "media"
-    metricas = estimar_tempo_leitura(pdf_bytes_artigo, densidade=densidade_artigo)
-    tempo_minutos = metricas["tempo_minutos"]
-    total_palavras_fmt = f"{metricas['total_palavras']:,}".replace(",", ".")
-    num_pags = metricas["num_paginas"]
-    ppm_val = metricas["ppm"]
-    dens_val = metricas["densidade"].capitalize()
-
-    if metricas["eh_escaneado"]:
-        detalhe_metricas = (
-            f"Base: ~{num_pags} págs escaneadas (~{total_palavras_fmt} palavras est.) • "
-            f"<b>{ppm_val} PPM</b> (Densidade {dens_val}) + fichamento"
-        )
-    else:
-        pags_texto = f" • {num_pags} págs" if num_pags > 0 else ""
-        detalhe_metricas = (
-            f"Base: {total_palavras_fmt} palavras{pags_texto} • "
-            f"<b>{ppm_val} PPM</b> (Densidade {dens_val}) + fichamento"
-        )
-
     # Tags de palavras-chave formatadas como badges modernos
     pills_html = ""
     if getattr(res, "palavras_chave", None):
@@ -728,25 +705,12 @@ if "resultado_analise" in st.session_state and st.session_state["resultado_anali
     with st.container(border=True):
         st.markdown(
             f"""
-            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: flex-start;">
-                <div style="flex: 1.2; min-width: 270px;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
-                        ⏱️ Tempo de Leitura Economizado
-                    </div>
-                    <div style="font-size: 1.35rem; font-weight: 800; color: #0F172A; margin-top: 0.2rem;">
-                        ~{tempo_minutos} min <span style="font-size: 0.82rem; font-weight: 500; color: #10B981;">(leitura crítica + fichamento)</span>
-                    </div>
-                    <div style="font-size: 0.78rem; color: #64748B; margin-top: 0.35rem; line-height: 1.35;">
-                        💡 {detalhe_metricas}
-                    </div>
+            <div>
+                <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
+                    🏷️ Grande Área / Subárea
                 </div>
-                <div style="flex: 1; min-width: 220px;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;">
-                        🏷️ Grande Área / Subárea
-                    </div>
-                    <div style="font-size: 1.05rem; font-weight: 700; color: #2563EB; margin-top: 0.2rem;">
-                        {area_texto}
-                    </div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: #2563EB; margin-top: 0.2rem;">
+                    {area_texto}
                 </div>
             </div>
             <div style="margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid #F1F5F9;">
